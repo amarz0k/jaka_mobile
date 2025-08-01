@@ -47,3 +47,5 @@ app.*.map.json
 .env
 
 push.bat
+
+strct.bat

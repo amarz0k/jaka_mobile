@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,19 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCOj_jVduItn6ulpUrbeiMP73x0kqOYBCk',
-    appId: '1:784150802180:web:699018d2382663d30e6a51',
-    messagingSenderId: '784150802180',
-    projectId: 'flutter-hadieaty-project',
-    authDomain: 'flutter-hadieaty-project.firebaseapp.com',
-    storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
-    measurementId: 'G-S0V938BSH4',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyB599tG4TARmK5XX0qKuIH4RvaJJL6uF50',
-    appId: '1:784150802180:android:56936839937c87570e6a51',
+    appId: '1:784150802180:android:c12ba4a1d9e7d1710e6a51',
     messagingSenderId: '784150802180',
     projectId: 'flutter-hadieaty-project',
     storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
@@ -60,33 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAqPxVOhTu2eZff2nzkph-vMn4-8AqNdko',
-    appId: '1:784150802180:ios:78e11dc83060b78f0e6a51',
+    appId: '1:784150802180:ios:1031754afe1fb9ab0e6a51',
     messagingSenderId: '784150802180',
     projectId: 'flutter-hadieaty-project',
     storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
     androidClientId: '784150802180-jrvue0tjfm0htt2lnvi07i2blhmmqjso.apps.googleusercontent.com',
     iosClientId: '784150802180-q71p05tnmkctc2k3pig5kmgkif8tkrt2.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatApp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAqPxVOhTu2eZff2nzkph-vMn4-8AqNdko',
-    appId: '1:784150802180:ios:78e11dc83060b78f0e6a51',
-    messagingSenderId: '784150802180',
-    projectId: 'flutter-hadieaty-project',
-    storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
-    androidClientId: '784150802180-jrvue0tjfm0htt2lnvi07i2blhmmqjso.apps.googleusercontent.com',
-    iosClientId: '784150802180-q71p05tnmkctc2k3pig5kmgkif8tkrt2.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatApp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCOj_jVduItn6ulpUrbeiMP73x0kqOYBCk',
-    appId: '1:784150802180:web:b3cf11d1806ba4c20e6a51',
-    messagingSenderId: '784150802180',
-    projectId: 'flutter-hadieaty-project',
-    authDomain: 'flutter-hadieaty-project.firebaseapp.com',
-    storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
-    measurementId: 'G-DTJV7KJLXY',
   );
 }

@@ -7,7 +7,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:784150802180:android:56936839937c87570e6a51",
+        "mobilesdk_app_id": "1:784150802180:android:c12ba4a1d9e7d1710e6a51",
         "android_client_info": {
           "package_name": "com.example.chat_app"
         }
@@ -27,7 +27,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "784150802180-uqan56439v9l5u96upri6d1krlp540ff.apps.googleusercontent.com",
+              "client_id": "784150802180-mp76srkqbbomj78nlq7qdgimofa4q995.apps.googleusercontent.com",
               "client_type": 3
             },
             {

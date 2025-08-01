@@ -1,1 +1,3 @@
-#ITI Graduation Project
+# chat_app
+
+A new Flutter project.

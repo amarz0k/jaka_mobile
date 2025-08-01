@@ -50,21 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB599tG4TARmK5XX0qKuIH4RvaJJL6uF50',
-    appId: '1:784150802180:android:c12ba4a1d9e7d1710e6a51',
-    messagingSenderId: '784150802180',
-    projectId: 'flutter-hadieaty-project',
-    storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
+    apiKey: 'AIzaSyA4fM1I1g8ED9dm7oDvVzYzF3_wTVisoUs',
+    appId: '1:40879973580:android:1fa440b884c16bd0e28e69',
+    messagingSenderId: '40879973580',
+    projectId: 'yojin-jaka',
+    storageBucket: 'yojin-jaka.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAqPxVOhTu2eZff2nzkph-vMn4-8AqNdko',
-    appId: '1:784150802180:ios:1031754afe1fb9ab0e6a51',
-    messagingSenderId: '784150802180',
-    projectId: 'flutter-hadieaty-project',
-    storageBucket: 'flutter-hadieaty-project.firebasestorage.app',
-    androidClientId: '784150802180-jrvue0tjfm0htt2lnvi07i2blhmmqjso.apps.googleusercontent.com',
-    iosClientId: '784150802180-q71p05tnmkctc2k3pig5kmgkif8tkrt2.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBAwtDXGMW5cG8XpKrw3OCX8ctUzWWDWvI',
+    appId: '1:40879973580:ios:9707cf2f901cfacae28e69',
+    messagingSenderId: '40879973580',
+    projectId: 'yojin-jaka',
+    storageBucket: 'yojin-jaka.firebasestorage.app',
+    iosClientId: '40879973580-kck57563qve2svg4qpdsnguq3p5fdp8f.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatApp',
   );
+
 }

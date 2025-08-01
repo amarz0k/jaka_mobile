@@ -1,3 +1,7 @@
+import 'package:chat_app/presentation/pages/home_page.dart';
+import 'package:chat_app/presentation/pages/login_page.dart';
+import 'package:chat_app/presentation/pages/sign_up_page.dart';
+import 'package:chat_app/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -14,8 +18,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRoutes.home,
+      routes: {
+        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.login: (context) => const LoginPage(),
+        AppRoutes.signUp: (context) => const SignUpPage(),
+      },
     );
   }
 }

@@ -1,31 +1,32 @@
-import 'package:chat_app/presentation/pages/home_page.dart';
-import 'package:chat_app/presentation/pages/login_page.dart';
-import 'package:chat_app/presentation/pages/sign_up_page.dart';
-import 'package:chat_app/utils/app_routes.dart';
+import 'package:chat_app/core/hive_service.dart';
+import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
+import 'package:chat_app/utils/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  runApp(const MainApp());
+  await HiveService().init();
+  runApp(MainApp());
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  MainApp({super.key});
+
+  final _appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.home,
-      routes: {
-        AppRoutes.home: (context) => const HomePage(),
-        AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.signUp: (context) => const SignUpPage(),
-      },
+    return MultiBlocProvider(
+      providers: [BlocProvider<AuthCubit>(create: (_) => AuthCubit())],
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Trebuc', useMaterial3: true),
+        routerConfig: _appRouter.config(),
+      ),
     );
   }
 }

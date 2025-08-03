@@ -11,7 +11,7 @@ part of 'app_router.dart';
 
 abstract class _$AppRouter extends RootStackRouter {
   // ignore: unused_element
-  _$AppRouter({super.navigatorKey});
+  _$AppRouter();
 
   @override
   final Map<String, PageFactory> pagesMap = {
@@ -52,10 +52,7 @@ abstract class _$AppRouter extends RootStackRouter {
 /// [ConversationPage]
 class ConversationRoute extends PageRouteInfo<void> {
   const ConversationRoute({List<PageRouteInfo>? children})
-      : super(
-          ConversationRoute.name,
-          initialChildren: children,
-        );
+    : super(ConversationRoute.name, initialChildren: children);
 
   static const String name = 'ConversationRoute';
 
@@ -66,10 +63,7 @@ class ConversationRoute extends PageRouteInfo<void> {
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
-      : super(
-          HomeRoute.name,
-          initialChildren: children,
-        );
+    : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -80,10 +74,7 @@ class HomeRoute extends PageRouteInfo<void> {
 /// [LoginPage]
 class LoginRoute extends PageRouteInfo<void> {
   const LoginRoute({List<PageRouteInfo>? children})
-      : super(
-          LoginRoute.name,
-          initialChildren: children,
-        );
+    : super(LoginRoute.name, initialChildren: children);
 
   static const String name = 'LoginRoute';
 
@@ -94,10 +85,7 @@ class LoginRoute extends PageRouteInfo<void> {
 /// [SettingPage]
 class SettingRoute extends PageRouteInfo<void> {
   const SettingRoute({List<PageRouteInfo>? children})
-      : super(
-          SettingRoute.name,
-          initialChildren: children,
-        );
+    : super(SettingRoute.name, initialChildren: children);
 
   static const String name = 'SettingRoute';
 
@@ -108,10 +96,7 @@ class SettingRoute extends PageRouteInfo<void> {
 /// [SignUpPage]
 class SignUpRoute extends PageRouteInfo<void> {
   const SignUpRoute({List<PageRouteInfo>? children})
-      : super(
-          SignUpRoute.name,
-          initialChildren: children,
-        );
+    : super(SignUpRoute.name, initialChildren: children);
 
   static const String name = 'SignUpRoute';
 

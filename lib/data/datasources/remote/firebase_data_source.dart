@@ -1,6 +1,5 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/data/models/user_model.dart';
-import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/utils/generate_random_id.dart';
 import 'package:firebase_auth/firebase_auth.dart';

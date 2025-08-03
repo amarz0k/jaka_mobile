@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/data/models/user_model.dart';
@@ -30,33 +29,33 @@ class NameCubit extends Bloc<NameEvent, NameState> {
     CheckUserDataEvent event,
     Emitter<NameState> emit,
   ) async {
-     emit(NameLoadingState());
+    emit(NameLoadingState());
 
-  final connectionStream = getIt<InternetConnectionChecker>().onStatusChange;
+    final connectionStream = getIt<InternetConnectionChecker>().onStatusChange;
 
-  await for (final status in connectionStream) {
-    final isConnected = status == InternetConnectionStatus.connected;
-    emit(InternetConnectionState(isConnected: isConnected));
+    await for (final status in connectionStream) {
+      final isConnected = status == InternetConnectionStatus.connected;
+      emit(InternetConnectionState(isConnected: isConnected));
 
-    if (isConnected) {
-      final dbRef = await _getUserFromRealtimeDatabaseUsecase.call();
+      if (isConnected) {
+        final dbRef = await _getUserFromRealtimeDatabaseUsecase.call();
 
-      await emit.forEach(
-        dbRef.onValue,
-        onData: (event) {
-          final userModel = UserModel.fromJson(
-            Map<String, dynamic>.from(event.snapshot.value as Map),
-          );
-          return NameSuccessState(user: userModel.toEntity());
-        },
-        onError: (_, __) => NameFailureState(error: 'Database error'),
-      );
-    } else {
-      final user = await _getUserFromLocalDatabaseUsecase.call();
-      emit(NameSuccessState(user: user));
+        await emit.forEach(
+          dbRef.onValue,
+          onData: (event) {
+            final userModel = UserModel.fromJson(
+              Map<String, dynamic>.from(event.snapshot.value as Map),
+            );
+            return NameSuccessState(user: userModel.toEntity());
+          },
+          onError: (_, __) => NameFailureState(error: 'Database error'),
+        );
+      } else {
+        final user = await _getUserFromLocalDatabaseUsecase.call();
+        emit(NameSuccessState(user: user));
+      }
+
+      break; // 👉 stop after first event (optional)
     }
-
-    break; // 👉 stop after first event (optional)
-  }
   }
 }

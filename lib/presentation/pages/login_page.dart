@@ -227,7 +227,7 @@ class LoginPage extends StatelessWidget {
 
                     BlocListener<AuthCubit, AuthStates>(
                       listener: (context, state) {
-                        if (state is AuthFailure) {
+                        if (state is AuthFailureState) {
                           showToastification(
                             context,
                             "Signin Failed",
@@ -235,7 +235,7 @@ class LoginPage extends StatelessWidget {
                             ToastificationType.error,
                           );
                         }
-                        if (state is AuthSuccess) {
+                        if (state is AuthSuccessState) {
                           showToastification(
                             context,
                             "Loged in Successfully",
@@ -247,7 +247,7 @@ class LoginPage extends StatelessWidget {
                       },
                       child: BlocBuilder<AuthCubit, AuthStates>(
                         builder: (context, state) {
-                          if (state is AuthLoading) {
+                          if (state is AuthLoadingState) {
                             return const Padding(
                               padding: EdgeInsets.only(top: 20),
                               child: Center(child: CircularProgressIndicator()),

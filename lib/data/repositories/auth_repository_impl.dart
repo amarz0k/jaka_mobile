@@ -1,20 +1,54 @@
 import 'dart:developer';
 
-import 'package:chat_app/data/datasources/remote/google_auth_data_source.dart';
+import 'package:chat_app/data/datasources/remote/firebase_data_source.dart';
 import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final GoogleAuthDataSource _googleAuthDataSource;
+  final FirebaseDataSource _firebaseDataSource;
   final FirebaseAuth _firebaseAuth;
 
-  AuthRepositoryImpl(this._googleAuthDataSource, this._firebaseAuth);
+  AuthRepositoryImpl(this._firebaseDataSource, this._firebaseAuth);
 
   @override
   Future<UserEntity> signInWithGoogle() async {
-    final userModel = await _googleAuthDataSource.signInWithGoogle();
+    final userModel = await _firebaseDataSource.signInWithGoogle();
     return userModel.toEntity();
+  }
+
+  @override
+  Future<UserEntity> signInWithEmailAndPassword(String em, String pass) async {
+    try {
+      final userModel = await _firebaseDataSource.signInWithEmailAndPassword(
+        em,
+        pass,
+      );
+      return userModel.toEntity();
+    } catch (e) {
+      log("signInWithEmail: Error signing in: $e");
+      throw FirebaseAuthException(
+        code: 'Signin Failed',
+        message: 'Signin Failed',
+      );
+    }
+  }
+
+  @override
+  Future<void> signUpWithEmailAndPassword(
+    String em,
+    String pass,
+    String name,
+  ) async {
+    try {
+      await _firebaseDataSource.signUpWithEmailAndPassword(em, pass, name);
+    } catch (e) {
+      log("signUpWithEmail: Error signing up: $e");
+      throw FirebaseAuthException(
+        code: 'Signup Failed',
+        message: 'Signup Failed',
+      );
+    }
   }
 
   @override
@@ -46,6 +80,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await _firebaseAuth.signOut();
     } catch (e) {
       log("signOut: Error signing out: $e");
+      throw FirebaseAuthException(
+        code: 'Signout Failed',
+        message: 'Signout Failed',
+      );
     }
   }
 }

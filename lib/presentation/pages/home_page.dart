@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
-import 'package:chat_app/core/di/service_locator.dart';
-import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
 import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
+import 'package:chat_app/presentation/cubit/auth/auth_event.dart';
 import 'package:chat_app/presentation/cubit/auth/auth_state.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +18,10 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: BlocBuilder<AuthCubit, AuthStates>(
           builder: (context, state) {
-            if (state is AuthSuccess) {
+            if (state is AuthInitialState) {
               context.router.replace(const HomeRoute());
             }
-            if (state is AuthFailure) {
+            if (state is AuthFailureState) {
               showToastification(
                 context,
                 "Signin Failed",
@@ -30,10 +29,15 @@ class HomePage extends StatelessWidget {
                 ToastificationType.error,
               );
             }
-            if (state is AuthLoading) {
+            if (state is AuthLoadingState) {
               return Center(child: CircularProgressIndicator());
             }
-            return ElevatedButton(onPressed: () {}, child: Text("Sign out"));
+            return ElevatedButton(
+              onPressed: () {
+                context.read<AuthCubit>().add(AuthSignOutEvent());
+              },
+              child: Text("Sign out"),
+            );
           },
         ),
       ),

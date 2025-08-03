@@ -5,10 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class GoogleAuthDataSource {
+class FirebaseDataSource {
   static bool initialized = false;
 
-  Future<void> _initSign() async {
+  Future<void> _initSignWithGoogle() async {
     if (!initialized) {
       await getIt<GoogleSignIn>().initialize(
         serverClientId:
@@ -20,7 +20,7 @@ class GoogleAuthDataSource {
 
   Future<UserModel> signInWithGoogle() async {
     try {
-      _initSign();
+      _initSignWithGoogle();
 
       final GoogleSignInAccount account = await getIt<GoogleSignIn>()
           .authenticate();
@@ -98,6 +98,93 @@ class GoogleAuthDataSource {
         code: 'Signin Failed',
         message: 'Signin Failed',
       );
+    }
+  }
+
+  Future<UserModel> signUpWithEmailAndPassword(
+    String email,
+    String password,
+    String name,
+  ) async {
+    try {
+      final UserCredential userCredential = await getIt<FirebaseAuth>()
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw FirebaseAuthException(
+          code: 'NULL_USER',
+          message: 'Sign up failed',
+        );
+      }
+
+      final uniqueId = await ensureUniqueId(name);
+
+      // Save user in Realtime Database
+      final userData = UserModel(
+        id: uniqueId,
+        name: name,
+        email: email,
+        photoUrl: null,
+        isOnline: true,
+        lastSeen: DateTime.now(),
+      );
+
+      final userRef = getIt<FirebaseDatabase>()
+          .ref()
+          .child('users')
+          .child(user.uid);
+      await userRef.set(userData.toJson());
+
+      return userData;
+    } catch (e) {
+      throw FirebaseAuthException(code: 'SIGNUP_FAILED', message: e.toString());
+    }
+  }
+
+  Future<UserModel> signInWithEmailAndPassword(
+    String email,
+    String password,
+  ) async {
+    try {
+      final UserCredential userCredential = await getIt<FirebaseAuth>()
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw FirebaseAuthException(
+          code: 'NULL_USER',
+          message: 'Sign in failed',
+        );
+      }
+
+      final token = await user.getIdToken(); // refreshes if expired
+      if (token == null) {
+        throw FirebaseAuthException(
+          code: 'TOKEN_ERROR',
+          message: 'No ID token',
+        );
+      }
+
+      final userRef = getIt<FirebaseDatabase>()
+          .ref()
+          .child('users')
+          .child(user.uid);
+      final snapshot = await userRef.get();
+
+      if (!snapshot.exists) {
+        throw FirebaseAuthException(
+          code: 'NOT_FOUND',
+          message: 'User not found in database',
+        );
+      }
+
+      final existingUser = UserModel.fromJson(
+        Map<String, dynamic>.from(snapshot.value as Map),
+      );
+      return existingUser;
+    } catch (e) {
+      throw FirebaseAuthException(code: 'SIGNIN_FAILED', message: e.toString());
     }
   }
 }

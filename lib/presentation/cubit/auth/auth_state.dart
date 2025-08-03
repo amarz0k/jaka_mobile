@@ -2,18 +2,20 @@ import 'package:chat_app/domain/entities/user_entity.dart';
 
 class AuthStates {}
 
-class AuthLoading extends AuthStates {}
+class AuthLoadingState extends AuthStates {}
 
-class AuthInitial extends AuthStates {}
+class AuthInitialState extends AuthStates {
 
-class AuthSuccess extends AuthStates {
-  final UserEntity? user;
-
-  AuthSuccess({this.user});
 }
 
-class AuthFailure extends AuthStates {
+class AuthSuccessState extends AuthStates {
+  final UserEntity user;
+
+  AuthSuccessState({required this.user});
+}
+
+class AuthFailureState extends AuthStates {
   final String? error;
 
-  AuthFailure({required this.error});
+  AuthFailureState({required this.error});
 }

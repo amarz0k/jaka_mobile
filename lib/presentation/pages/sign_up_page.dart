@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/constants/app_images.dart';
-import 'package:chat_app/data/datasources/remote/google_auth_data_source.dart';
+import 'package:chat_app/data/datasources/remote/firebase_data_source.dart';
 import 'package:chat_app/data/repositories/auth_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';

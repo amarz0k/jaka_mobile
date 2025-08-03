@@ -1,7 +1,12 @@
 class AuthEvent {}
 
-class AuthSignInWithGoogle extends AuthEvent {}
+class AuthSignInWithGoogleEvent extends AuthEvent {}
 
-class AuthSignInWithEmail extends AuthEvent {}
+class AuthSignInWithEmailAndPasswordEvent extends AuthEvent {
+  final String email;
+  final String password;
 
-class AuthSignOut extends AuthEvent {}
+  AuthSignInWithEmailAndPasswordEvent({required this.email, required this.password});
+}
+
+class AuthSignOutEvent extends AuthEvent {}

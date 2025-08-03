@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 ElevatedButton continueWithGoogleButton(BuildContext context) {
   return ElevatedButton(
     onPressed: () {
-      context.read<AuthCubit>().add(AuthSignInWithGoogle());
+      context.read<AuthCubit>().add(AuthSignInWithGoogleEvent());
     },
     style: ElevatedButton.styleFrom(
       minimumSize: const Size(0, 60),

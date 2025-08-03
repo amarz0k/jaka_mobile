@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/constants/app_images.dart';
-import 'package:chat_app/presentation/cubit/auth/sign_up/sign_up_cubit.dart';
-import 'package:chat_app/presentation/cubit/auth/sign_up/sign_up_event.dart';
-import 'package:chat_app/presentation/cubit/auth/sign_up/sign_up_state.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_event.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_state.dart';
 import 'package:chat_app/presentation/widgets/coninue_with_google_button.dart';
 import 'package:chat_app/presentation/widgets/custom_text_form_field.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
@@ -175,7 +175,7 @@ class SignUpPage extends StatelessWidget {
                               Colors.green,
                               ToastificationType.success,
                             );
-                            context.router.replace(const HomeRoute());
+                            context.router.replace(const LoginRoute());
                           }
                         },
                         child: Column(
@@ -186,8 +186,6 @@ class SignUpPage extends StatelessWidget {
                               controller: _displayNameController,
                               validator: _displayNameValidator,
                               onChanged: _validateDisplayName,
-                              obscureText:
-                                  false, // Display name should not be obscured
                             ),
                             const SizedBox(height: 40),
                             customFormField(
@@ -196,18 +194,15 @@ class SignUpPage extends StatelessWidget {
                               controller: _emailController,
                               validator: _emailValidator,
                               onChanged: _validateEmail,
-                              obscureText:
-                                  false, // Email should not be obscured
                             ),
                             const SizedBox(height: 40),
                             customFormField(
                               labelText: 'Password',
                               hintText: 'Enter your password',
                               controller: _passwordController,
-                              validator:
-                                  _passwordValidator, // Fixed: was using _passwordConfirmValidator
+                              validator: _passwordValidator,
                               onChanged: _validatePassword,
-                              obscureText: true, // Password should be obscured
+                              obscureText: true,
                             ),
                             const SizedBox(height: 40),
                             customFormField(
@@ -216,7 +211,7 @@ class SignUpPage extends StatelessWidget {
                               controller: _confirmPasswordController,
                               validator: _passwordConfirmValidator,
                               onChanged: _validatePasswordConfirm,
-                              obscureText: true, // Password should be obscured
+                              obscureText: true,
                             ),
                           ],
                         ),

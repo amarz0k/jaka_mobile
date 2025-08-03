@@ -5,7 +5,10 @@ import 'package:chat_app/data/repositories/auth_repository_impl.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
+import 'package:chat_app/domain/usecases/get_user_from_local_database_usecase.dart';
+import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_local_usecase.dart';
+import 'package:chat_app/domain/usecases/save_user_to_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_email_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
@@ -14,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 final getIt = GetIt.instance;
 
@@ -44,8 +48,20 @@ void setUpServiceLocator() {
     () => SignInWithGoogleUsecase(getIt<AuthRepository>()),
   );
 
-  getIt.registerLazySingleton<SaveUser>(
-    () => SaveUser(getIt<UserRepository>()),
+  getIt.registerLazySingleton<SaveUserToLocalUsecase>(
+    () => SaveUserToLocalUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<SaveUserToRealtimeDatabaseUsecase>(
+    () => SaveUserToRealtimeDatabaseUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetUserFromLocalDatabaseUsecase>(
+    () => GetUserFromLocalDatabaseUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetUserDatabaseReferenceUsecase>(
+    () => GetUserDatabaseReferenceUsecase(getIt<UserRepository>()),
   );
 
   getIt.registerLazySingleton<SignOutUsecase>(
@@ -60,5 +76,10 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<SignUpWithEmailUsecase>(
     () => SignUpWithEmailUsecase(getIt<AuthRepository>()),
+  );
+
+  // others
+  getIt.registerLazySingleton<InternetConnectionChecker>(
+    () => InternetConnectionChecker.createInstance(),
   );
 }

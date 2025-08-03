@@ -6,7 +6,7 @@ class SignInWithGoogleUsecase {
 
   SignInWithGoogleUsecase(this._authRepository);
 
-  Future<UserEntity> call() async {
+  Future<void> call() async {
     return await _authRepository.signInWithGoogle();
   }
 }

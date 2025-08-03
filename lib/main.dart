@@ -2,10 +2,12 @@ import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
-import 'package:chat_app/presentation/cubit/auth/google_sign_in/google_sign_in_cubit.dart';
-import 'package:chat_app/presentation/cubit/auth/login/login_cubit.dart';
-import 'package:chat_app/presentation/cubit/auth/sign_out/sign_out_cubit.dart';
-import 'package:chat_app/presentation/cubit/auth/sign_up/sign_up_cubit.dart';
+import 'package:chat_app/domain/repositories/user_repository.dart';
+import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/login/login_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_cubit.dart';
+import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,11 +47,14 @@ class MainApp extends StatelessWidget {
         BlocProvider<SignOutCubit>(
           create: (_) => SignOutCubit(authRepository: getIt<AuthRepository>()),
         ),
+        BlocProvider<NameCubit>(
+          create: (_) => NameCubit(userRepository: getIt<UserRepository>()),
+        ),
       ],
       child: ToastificationWrapper(
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(fontFamily: 'Trebuc', useMaterial3: true),
+          theme: ThemeData(fontFamily: 'Nanami', useMaterial3: true),
           routerConfig: _appRouter.config(),
         ),
       ),

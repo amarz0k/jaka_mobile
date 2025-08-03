@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 class HiveService {
   Future<void> init() async {
     await Hive.initFlutter();
-    await Hive.openBox<UserEntity>('user');
+    await Hive.openBox<UserEntity>('currentUser');
   }
 
   Future<void> openBox<T>(String boxName) async {

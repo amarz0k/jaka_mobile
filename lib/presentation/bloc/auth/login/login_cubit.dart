@@ -1,8 +1,8 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_email_usecase.dart';
-import 'package:chat_app/presentation/cubit/auth/login/login_event.dart';
-import 'package:chat_app/presentation/cubit/auth/login/login_state.dart';
+import 'package:chat_app/presentation/bloc/auth/login/login_event.dart';
+import 'package:chat_app/presentation/bloc/auth/login/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginCubit extends Bloc<LoginEvent, LoginState> {
@@ -20,8 +20,8 @@ class LoginCubit extends Bloc<LoginEvent, LoginState> {
   ) async {
     emit(AuthLoadingState());
     try {
-      final result = await _signInWithEmail.call(event.email, event.password);
-      emit(AuthSuccessState(user: result));
+      await _signInWithEmail.call(event.email, event.password);
+      emit(AuthSuccessState());
     } catch (e) {
       emit(AuthFailureState(error: e.toString()));
     }

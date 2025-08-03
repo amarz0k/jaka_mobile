@@ -1,5 +1,7 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/data/models/user_model.dart';
+import 'package:chat_app/domain/entities/user_entity.dart';
+import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/utils/generate_random_id.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -18,7 +20,7 @@ class FirebaseDataSource {
     initialized = true;
   }
 
-  Future<UserModel> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     try {
       await _initSignWithGoogle();
 
@@ -37,8 +39,6 @@ class FirebaseDataSource {
         final auth2 = await authClient.authorizationForScopes(['email']);
 
         if (auth2?.accessToken == null) {
-          // print('\x1B[35m${"No Acess Token"}\x1B[0m');
-
           throw FirebaseAuthException(
             code: 'No Acess Token',
             message: 'Fail to get access token',
@@ -47,11 +47,6 @@ class FirebaseDataSource {
         auth = auth2;
       }
 
-      // print('\x1B[35m auth: ${auth}\x1B[0m');
-      // print('\x1B[35m accessToken: ${accessToken}\x1B[0m');
-      // print('\x1B[35m auth.accessToken: ${auth!.accessToken}\x1B[0m');
-      // print('\x1B[35m idToken: ${idToken}\x1B[0m');
-
       final credential = GoogleAuthProvider.credential(
         accessToken: accessToken,
         idToken: idToken,
@@ -59,37 +54,61 @@ class FirebaseDataSource {
 
       UserCredential userCredential = await getIt<FirebaseAuth>()
           .signInWithCredential(credential);
-      // print('\x1B[35m${userCredential.user}\x1B[0m');
 
-      final uid = userCredential.user!.uid;
-      final userRef = getIt<FirebaseDatabase>().ref().child('users').child(uid);
+      final name = userCredential.user!.displayName!;
+      final uniqueId = await ensureUniqueId(name);
 
-      final DataSnapshot snapshot = await userRef.get();
-
-      if (!snapshot.exists) {
-        final userData = UserModel(
-          id: generateId(userCredential.user!.displayName!),
-          name: userCredential.user!.displayName!,
-          email: userCredential.user!.email!,
-          photoUrl: userCredential.user!.photoURL!,
-          isOnline: true,
-          lastSeen: DateTime.now(),
-        );
-
-        await userRef.set(userData.toJson());
-        return userData;
-      }
-
-      final existingUser = UserModel.fromJson(
-        Map<String, dynamic>.from(snapshot.value as Map),
+      final userData = UserModel(
+        id: uniqueId,
+        name: name,
+        email: userCredential.user!.email!,
+        photoUrl: userCredential.user!.photoURL!,
+        isOnline: true,
+        lastSeen: DateTime.now(),
       );
 
-      return existingUser;
+      getIt<UserRepository>().saveUserToRealtimeDatabase(userData);
+      getIt<UserRepository>().saveUserToLocalStorage(userData.toEntity());
     } catch (e) {
       throw FirebaseAuthException(
         code: 'Signin Failed',
         message: 'Signin Failed',
       );
+    }
+  }
+
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    try {
+      final UserCredential userCredential = await getIt<FirebaseAuth>()
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      final user = userCredential.user;
+      if (user == null) {
+        throw FirebaseAuthException(
+          code: 'NULL_USER',
+          message: 'Sign in failed',
+        );
+      }
+
+      final token = await user.getIdToken();
+      if (token == null) {
+        throw FirebaseAuthException(
+          code: 'TOKEN_ERROR',
+          message: 'No ID token',
+        );
+      }
+
+      final dbRef = await getIt<UserRepository>().getUserDatabaseReference();
+
+      final DataSnapshot snapshot = await dbRef.get();
+
+      final exsistingUser = UserModel.fromJson(
+        Map<String, dynamic>.from(snapshot.value as Map),
+      );
+
+      getIt<UserRepository>().saveUserToLocalStorage(exsistingUser.toEntity());
+    } catch (e) {
+      throw FirebaseAuthException(code: 'SIGNIN_FAILED', message: e.toString());
     }
   }
 
@@ -132,60 +151,6 @@ class FirebaseDataSource {
       return userData;
     } catch (e) {
       throw FirebaseAuthException(code: 'SIGNUP_FAILED', message: e.toString());
-    }
-  }
-
-  Future<UserModel> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
-    try {
-      final UserCredential userCredential = await getIt<FirebaseAuth>()
-          .signInWithEmailAndPassword(email: email, password: password);
-
-      final user = userCredential.user;
-      if (user == null) {
-        throw FirebaseAuthException(
-          code: 'NULL_USER',
-          message: 'Sign in failed',
-        );
-      }
-
-      final token = await user.getIdToken(); // refreshes if expired
-      if (token == null) {
-        throw FirebaseAuthException(
-          code: 'TOKEN_ERROR',
-          message: 'No ID token',
-        );
-      }
-
-      final userRef = getIt<FirebaseDatabase>()
-          .ref()
-          .child('users')
-          .child(user.uid);
-      final snapshot = await userRef.get();
-
-      if (!snapshot.exists) {
-        throw FirebaseAuthException(
-          code: 'NOT_FOUND',
-          message: 'User not found in database',
-        );
-      }
-
-      final existingUser = UserModel.fromJson(
-        Map<String, dynamic>.from(snapshot.value as Map),
-      );
-
-      if (existingUser.password != password) {
-        throw FirebaseAuthException(
-          code: 'WRONG_PASSWORD',
-          message: 'Wrong password',
-        );
-      }
-
-      return existingUser;
-    } catch (e) {
-      throw FirebaseAuthException(code: 'SIGNIN_FAILED', message: e.toString());
     }
   }
 }

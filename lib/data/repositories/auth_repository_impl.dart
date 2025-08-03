@@ -12,19 +12,14 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._firebaseDataSource, this._firebaseAuth);
 
   @override
-  Future<UserEntity> signInWithGoogle() async {
-    final userModel = await _firebaseDataSource.signInWithGoogle();
-    return userModel.toEntity();
+  Future<void> signInWithGoogle() async {
+    await _firebaseDataSource.signInWithGoogle();
   }
 
   @override
-  Future<UserEntity> signInWithEmailAndPassword(String em, String pass) async {
+  Future<void> signInWithEmailAndPassword(String em, String pass) async {
     try {
-      final userModel = await _firebaseDataSource.signInWithEmailAndPassword(
-        em,
-        pass,
-      );
-      return userModel.toEntity();
+      await _firebaseDataSource.signInWithEmailAndPassword(em, pass);
     } catch (e) {
       throw FirebaseAuthException(
         code: 'Signin Failed',

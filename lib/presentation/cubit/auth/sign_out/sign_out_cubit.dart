@@ -21,6 +21,7 @@ class SignOutCubit extends Bloc<SignOutEvent, SignOutState> {
     emit(AuthLoadingState());
     try {
       await _signOutUsecase.call();
+      emit(AuthInitialState());
     } catch (e) {
       emit(AuthFailureState(error: e.toString()));
     }

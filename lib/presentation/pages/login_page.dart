@@ -138,6 +138,7 @@ class LoginPage extends StatelessWidget {
                               controller: _passwordController,
                               validator: _passwordValidator,
                               onChanged: _validatePassword,
+                              obscureText: true,
                             ),
                           ],
                         ),

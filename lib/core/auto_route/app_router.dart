@@ -13,13 +13,14 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: LoginRoute.page, path: '/login', initial: true),
+    AutoRoute(page: LoginRoute.page, path: '/login'),
     AutoRoute(page: SignUpRoute.page, path: '/signup'),
 
     AutoRoute(
       page: HomeRoute.page,
       path: '/home',
       guards: [getIt<AuthGuard>()],
+      initial: true,
     ),
     AutoRoute(
       page: SettingRoute.page,

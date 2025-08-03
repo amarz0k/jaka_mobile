@@ -26,7 +26,6 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return userModel.toEntity();
     } catch (e) {
-      log("signInWithEmail: Error signing in: $e");
       throw FirebaseAuthException(
         code: 'Signin Failed',
         message: 'Signin Failed',

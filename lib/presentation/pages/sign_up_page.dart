@@ -160,6 +160,14 @@ class SignUpPage extends StatelessWidget {
                       key: _formKey,
                       child: BlocListener<SignUpCubit, SignUpState>(
                         listener: (context, state) {
+                          if (state is AuthFailureState) {
+                            showToastification(
+                              context,
+                              "Signup Failed",
+                              Colors.red,
+                              ToastificationType.error,
+                            );
+                          }
                           if (state is AuthSuccessState) {
                             showToastification(
                               context,

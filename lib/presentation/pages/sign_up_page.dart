@@ -4,9 +4,9 @@ import 'package:chat_app/constants/app_images.dart';
 import 'package:chat_app/data/datasources/remote/google_auth_data_source.dart';
 import 'package:chat_app/data/repositories/auth_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
-import 'package:chat_app/domain/usecases/sign_in_with_google.dart';
+import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
-import 'package:chat_app/utils/routes.dart';
+import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -246,16 +246,7 @@ class SignUpPage extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     ElevatedButton(
-                      onPressed: () async {
-                        final GoogleAuthDataSource googleAuthDataSource =
-                            GoogleAuthDataSource();
-                        final AuthRepository authRepo = AuthRepositoryImpl(
-                          googleAuthDataSource,
-                        );
-                        final signInWithGoogle = SignInWithGoogle(authRepo);
-                        await signInWithGoogle.call();
-                        context.router.replace(const HomeRoute());
-                      },
+                      onPressed: () async {},
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(0, 60),
                         overlayColor: AppColors.lightBlack,

@@ -2,7 +2,7 @@ import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
-import 'package:chat_app/utils/routes.dart';
+import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

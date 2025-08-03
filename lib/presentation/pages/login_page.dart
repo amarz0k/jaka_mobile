@@ -5,7 +5,7 @@ import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
 import 'package:chat_app/presentation/cubit/auth/auth_state.dart';
 import 'package:chat_app/presentation/widgets/coninue_with_google_button.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
-import 'package:chat_app/utils/routes.dart';
+import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -173,7 +173,9 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 30),
 
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.router.replace(const HomeRoute());
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                         shape: RoundedRectangleBorder(

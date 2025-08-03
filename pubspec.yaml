@@ -63,3 +63,8 @@ flutter:
       fonts:
         - asset: assets/fonts/trebuc/trebuc.ttf
           weight: 400
+
+    - family: Nanami
+      fonts:
+        - asset: assets/fonts/nanami/Nanami.ttf
+          weight: 400

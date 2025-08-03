@@ -19,7 +19,7 @@ class AuthGuard extends AutoRouteGuard {
       return;
     }
 
-    log("AuthGuard: User found with UID: ${user.uid}");
+    // log("AuthGuard: User found with UID: ${user.uid}");
 
     try {
       final token = await user.getIdToken();

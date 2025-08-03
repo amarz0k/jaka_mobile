@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/constants/app_images.dart';
-import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
-import 'package:chat_app/presentation/cubit/auth/auth_state.dart';
+import 'package:chat_app/presentation/cubit/auth/login/login_cubit.dart';
+import 'package:chat_app/presentation/cubit/auth/login/login_event.dart';
+import 'package:chat_app/presentation/cubit/auth/login/login_state.dart';
 import 'package:chat_app/presentation/widgets/coninue_with_google_button.dart';
+import 'package:chat_app/presentation/widgets/custom_text_form_field.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:flutter/gestures.dart';
@@ -68,9 +70,9 @@ class LoginPage extends StatelessWidget {
             top: MediaQuery.of(context).size.height * 0.2,
             left: 0,
             right: 0,
+            bottom: 0, // Changed from height to bottom
             child: Container(
               width: MediaQuery.of(context).size.width * 0.8,
-              height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -78,12 +80,13 @@ class LoginPage extends StatelessWidget {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: Padding(
+              child: SingleChildScrollView(
+                // Added SingleChildScrollView
                 padding: const EdgeInsets.only(
                   top: 20,
                   left: 25,
                   right: 25,
-                  bottom: 10,
+                  bottom: 20, // Increased bottom padding
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -99,71 +102,45 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 50),
                     Form(
                       key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _emailController,
-                            validator: _emailValidator,
-                            onChanged: _validateEmail,
-                            autocorrect: false,
-                            cursorColor: AppColors.primaryColor,
-                            decoration: InputDecoration(
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
+                      child: BlocListener<LoginCubit, LoginState>(
+                        listener: (context, state) {
+                          if (state is AuthFailureState) {
+                            showToastification(
+                              context,
+                              "Signin Failed",
+                              Colors.red,
+                              ToastificationType.error,
+                            );
+                          }
+                          if (state is AuthSuccessState) {
+                            showToastification(
+                              context,
+                              "Loged in Successfully",
+                              Colors.green,
+                              ToastificationType.success,
+                            );
+                            context.router.replace(const HomeRoute());
+                          }
+                        },
+                        child: Column(
+                          children: [
+                            customFormField(
                               labelText: 'Email',
-                              labelStyle: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                letterSpacing: 1.5,
-                              ),
                               hintText: 'Enter your email address',
-                              hintStyle: TextStyle(
-                                color: Colors.black26,
-                                fontSize: 16,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
+                              controller: _emailController,
+                              validator: _emailValidator,
+                              onChanged: _validateEmail,
                             ),
-                          ),
-                          const SizedBox(height: 40),
-                          TextFormField(
-                            controller: _passwordController,
-                            validator: _passwordValidator,
-                            onChanged: _validatePassword,
-                            obscureText: true,
-                            autocorrect: false,
-                            cursorColor: AppColors.primaryColor,
-                            decoration: InputDecoration(
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
+                            const SizedBox(height: 40),
+                            customFormField(
                               labelText: 'Password',
-                              labelStyle: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 18,
-                                letterSpacing: 1.5,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              hintText: 'Enter your password',
-                              hintStyle: TextStyle(
-                                color: Colors.black26,
-                                fontSize: 16,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
+                              hintText: 'Enter your assword',
+                              controller: _passwordController,
+                              validator: _passwordValidator,
+                              onChanged: _validatePassword,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -188,7 +165,12 @@ class LoginPage extends StatelessWidget {
 
                     ElevatedButton(
                       onPressed: () {
-                        context.router.replace(const HomeRoute());
+                        context.read<LoginCubit>().add(
+                          AuthSignInWithEmailAndPasswordEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
@@ -239,38 +221,7 @@ class LoginPage extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    BlocListener<AuthCubit, AuthStates>(
-                      listener: (context, state) {
-                        if (state is AuthFailureState) {
-                          showToastification(
-                            context,
-                            "Signin Failed",
-                            Colors.red,
-                            ToastificationType.error,
-                          );
-                        }
-                        if (state is AuthSuccessState) {
-                          showToastification(
-                            context,
-                            "Loged in Successfully",
-                            Colors.green,
-                            ToastificationType.success,
-                          );
-                          context.router.replace(const HomeRoute());
-                        }
-                      },
-                      child: BlocBuilder<AuthCubit, AuthStates>(
-                        builder: (context, state) {
-                          if (state is AuthLoadingState) {
-                            return const Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: Center(child: CircularProgressIndicator()),
-                            );
-                          }
-                          return continueWithGoogleButton(context);
-                        },
-                      ),
-                    ),
+                    continueWithGoogleButton(),
                     const SizedBox(height: 50),
 
                     RichText(

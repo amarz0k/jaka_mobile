@@ -21,14 +21,18 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
   final String email;
 
   @HiveField(3)
+  @JsonKey(name: 'password')
+  final String? password;
+
+  @HiveField(4)
   @JsonKey(name: 'photoUrl')
   final String? photoUrl;
 
-  @HiveField(4)
+  @HiveField(5)
   @JsonKey(name: 'isOnline')
   final bool isOnline;
 
-  @HiveField(5)
+  @HiveField(6)
   @JsonKey(name: 'lastSeen')
   final DateTime lastSeen;
 
@@ -36,6 +40,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     required this.id,
     required this.name,
     required this.email,
+    this.password,
     this.photoUrl,
     this.isOnline = false,
     required this.lastSeen,
@@ -49,6 +54,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     id: id,
     name: name,
     email: email,
+    password: password,
     photoUrl: photoUrl,
     isOnline: isOnline,
     lastSeen: lastSeen,

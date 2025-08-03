@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
-import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
-import 'package:chat_app/presentation/cubit/auth/auth_event.dart';
-import 'package:chat_app/presentation/cubit/auth/auth_state.dart';
+import 'package:chat_app/presentation/cubit/auth/sign_out/sign_out_cubit.dart';
+import 'package:chat_app/presentation/cubit/auth/sign_out/sign_out_event.dart';
+import 'package:chat_app/presentation/cubit/auth/sign_out/sign_out_state.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: BlocBuilder<AuthCubit, AuthStates>(
+        child: BlocBuilder<SignOutCubit, SignOutState>(
           builder: (context, state) {
             if (state is AuthInitialState) {
               context.router.replace(const HomeRoute());
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
             }
             return ElevatedButton(
               onPressed: () {
-                context.read<AuthCubit>().add(AuthSignOutEvent());
+                context.read<SignOutCubit>().add(AuthSignOutEvent());
               },
               child: Text("Sign out"),
             );

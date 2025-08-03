@@ -125,6 +125,7 @@ class FirebaseDataSource {
         id: uniqueId,
         name: name,
         email: email,
+        password: password,
         photoUrl: null,
         isOnline: true,
         lastSeen: DateTime.now(),
@@ -182,6 +183,14 @@ class FirebaseDataSource {
       final existingUser = UserModel.fromJson(
         Map<String, dynamic>.from(snapshot.value as Map),
       );
+
+      if (existingUser.password != password) {
+        throw FirebaseAuthException(
+          code: 'WRONG_PASSWORD',
+          message: 'Wrong password',
+        );
+      }
+
       return existingUser;
     } catch (e) {
       throw FirebaseAuthException(code: 'SIGNIN_FAILED', message: e.toString());

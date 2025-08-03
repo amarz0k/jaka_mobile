@@ -35,13 +35,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> signUpWithEmailAndPassword(
+  Future<UserEntity> signUpWithEmailAndPassword(
     String em,
     String pass,
     String name,
   ) async {
     try {
-      await _firebaseDataSource.signUpWithEmailAndPassword(em, pass, name);
+      final userModel = await _firebaseDataSource.signUpWithEmailAndPassword(
+        em,
+        pass,
+        name,
+      );
+
+      return userModel.toEntity();
     } catch (e) {
       log("signUpWithEmail: Error signing up: $e");
       throw FirebaseAuthException(

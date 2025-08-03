@@ -19,6 +19,7 @@ mixin _$UserEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
   bool get isOnline => throw _privateConstructorUsedError;
   DateTime get lastSeen => throw _privateConstructorUsedError;
@@ -40,6 +41,7 @@ abstract class $UserEntityCopyWith<$Res> {
       {String id,
       String name,
       String email,
+      String? password,
       String? photoUrl,
       bool isOnline,
       DateTime lastSeen});
@@ -63,6 +65,7 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
     Object? id = null,
     Object? name = null,
     Object? email = null,
+    Object? password = freezed,
     Object? photoUrl = freezed,
     Object? isOnline = null,
     Object? lastSeen = null,
@@ -80,6 +83,10 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
       photoUrl: freezed == photoUrl
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
@@ -108,6 +115,7 @@ abstract class _$$UserEntityImplCopyWith<$Res>
       {String id,
       String name,
       String email,
+      String? password,
       String? photoUrl,
       bool isOnline,
       DateTime lastSeen});
@@ -129,6 +137,7 @@ class __$$UserEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? email = null,
+    Object? password = freezed,
     Object? photoUrl = freezed,
     Object? isOnline = null,
     Object? lastSeen = null,
@@ -146,6 +155,10 @@ class __$$UserEntityImplCopyWithImpl<$Res>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String?,
       photoUrl: freezed == photoUrl
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
@@ -169,6 +182,7 @@ class _$UserEntityImpl implements _UserEntity {
       {required this.id,
       required this.name,
       required this.email,
+      this.password,
       this.photoUrl,
       this.isOnline = false,
       required this.lastSeen});
@@ -180,6 +194,8 @@ class _$UserEntityImpl implements _UserEntity {
   @override
   final String email;
   @override
+  final String? password;
+  @override
   final String? photoUrl;
   @override
   @JsonKey()
@@ -189,7 +205,7 @@ class _$UserEntityImpl implements _UserEntity {
 
   @override
   String toString() {
-    return 'UserEntity(id: $id, name: $name, email: $email, photoUrl: $photoUrl, isOnline: $isOnline, lastSeen: $lastSeen)';
+    return 'UserEntity(id: $id, name: $name, email: $email, password: $password, photoUrl: $photoUrl, isOnline: $isOnline, lastSeen: $lastSeen)';
   }
 
   @override
@@ -200,6 +216,8 @@ class _$UserEntityImpl implements _UserEntity {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
             (identical(other.isOnline, isOnline) ||
@@ -209,8 +227,8 @@ class _$UserEntityImpl implements _UserEntity {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, email, photoUrl, isOnline, lastSeen);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, email, password, photoUrl, isOnline, lastSeen);
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -226,6 +244,7 @@ abstract class _UserEntity implements UserEntity {
       {required final String id,
       required final String name,
       required final String email,
+      final String? password,
       final String? photoUrl,
       final bool isOnline,
       required final DateTime lastSeen}) = _$UserEntityImpl;
@@ -236,6 +255,8 @@ abstract class _UserEntity implements UserEntity {
   String get name;
   @override
   String get email;
+  @override
+  String? get password;
   @override
   String? get photoUrl;
   @override

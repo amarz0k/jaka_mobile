@@ -8,6 +8,7 @@ class UserEntity with _$UserEntity {
     required String id,
     required String name,
     required String email,
+    String? password,
     String? photoUrl,
     @Default(false) bool isOnline,
     required DateTime lastSeen,

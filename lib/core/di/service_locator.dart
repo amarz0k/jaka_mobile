@@ -5,11 +5,11 @@ import 'package:chat_app/data/repositories/auth_repository_impl.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
-import 'package:chat_app/domain/usecases/check_auth_status_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_local_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_email_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
+import 'package:chat_app/domain/usecases/sign_up_with_email_usecase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get_it/get_it.dart';
@@ -27,16 +27,12 @@ void setUpServiceLocator() {
   getIt.registerLazySingleton<HiveService>(() => HiveService());
 
   // Data sources
-  getIt.registerLazySingleton<FirebaseDataSource>(
-    () => FirebaseDataSource(),
-  );
+  getIt.registerLazySingleton<FirebaseDataSource>(() => FirebaseDataSource());
 
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      getIt<FirebaseDataSource>(),
-      getIt<FirebaseAuth>(),
-    ),
+    () =>
+        AuthRepositoryImpl(getIt<FirebaseDataSource>(), getIt<FirebaseAuth>()),
   );
 
   getIt.registerLazySingleton<UserRepository>(
@@ -60,5 +56,9 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<SignInWithEmailUsecase>(
     () => SignInWithEmailUsecase(getIt<AuthRepository>()),
+  );
+
+  getIt.registerLazySingleton<SignUpWithEmailUsecase>(
+    () => SignUpWithEmailUsecase(getIt<AuthRepository>()),
   );
 }

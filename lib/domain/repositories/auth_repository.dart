@@ -5,7 +5,7 @@ abstract class AuthRepository {
 
   Future<UserEntity> signInWithEmailAndPassword(String em, String pass);
 
-  Future<void> signUpWithEmailAndPassword(String em, String pass, String name);
+  Future<UserEntity> signUpWithEmailAndPassword(String em, String pass, String name);
 
   Future<bool> isUserAuthenticated();
 

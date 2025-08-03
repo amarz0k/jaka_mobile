@@ -25,14 +25,6 @@ class FirebaseDataSource {
       final GoogleSignInAccount account = await getIt<GoogleSignIn>()
           .authenticate();
 
-      if (account == null) {
-        // print('\x1B[35m${"SIGNIN ABORTED BY USER"}\x1B[0m');
-        throw FirebaseAuthException(
-          code: 'SIGNIN ABORTED BY USER',
-          message: 'Signin Incomplete because user exsists',
-        );
-      }
-
       final idToken = account.authentication.idToken;
       final authClient = account.authorizationClient;
 

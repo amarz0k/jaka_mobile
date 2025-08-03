@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/constants/app_images.dart';
@@ -9,10 +7,8 @@ import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_google.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:chat_app/utils/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 @RoutePage()
 class SignUpPage extends StatelessWidget {
@@ -133,6 +129,7 @@ class SignUpPage extends StatelessWidget {
                             controller: _passwordController,
                             validator: _passwordValidator,
                             onChanged: _passwordValidator,
+                            obscureText: true,
                             autocorrect: false,
                             cursorColor: AppColors.primaryColor,
                             decoration: InputDecoration(
@@ -164,19 +161,20 @@ class SignUpPage extends StatelessWidget {
                             controller: _confirmPasswordController,
                             validator: _passwordConfirmValidator,
                             onChanged: _passwordConfirmValidator,
+                            obscureText: true,
                             autocorrect: false,
                             cursorColor: AppColors.primaryColor,
                             decoration: InputDecoration(
                               floatingLabelBehavior:
                                   FloatingLabelBehavior.always,
-                              labelText: 'Password',
+                              labelText: 'Confirm Password',
                               labelStyle: TextStyle(
                                 color: Colors.black54,
                                 fontSize: 18,
                                 letterSpacing: 1.5,
                                 fontWeight: FontWeight.bold,
                               ),
-                              hintText: 'Enter your password',
+                              hintText: 'Confirm your password',
                               hintStyle: TextStyle(
                                 color: Colors.black26,
                                 fontSize: 16,
@@ -250,10 +248,7 @@ class SignUpPage extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () async {
                         final GoogleAuthDataSource googleAuthDataSource =
-                            GoogleAuthDataSource(
-                              FirebaseAuth.instance,
-                              GoogleSignIn(),
-                            );
+                            GoogleAuthDataSource();
                         final AuthRepository authRepo = AuthRepositoryImpl(
                           googleAuthDataSource,
                         );
@@ -263,10 +258,11 @@ class SignUpPage extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(0, 60),
-                        overlayColor: Colors.black12,
-                        backgroundColor: Colors.grey[200],
+                        overlayColor: AppColors.lightBlack,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: AppColors.primaryColor),
                         ),
                         elevation: 2,
                         shadowColor: Colors.transparent,

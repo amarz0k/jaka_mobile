@@ -1,16 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/constants/app_images.dart';
-import 'package:chat_app/data/datasources/remote/google_auth_data_source.dart';
-import 'package:chat_app/data/repositories/auth_repository_impl.dart';
-import 'package:chat_app/domain/repositories/auth_repository.dart';
-import 'package:chat_app/domain/usecases/sign_in_with_google.dart';
-import 'package:chat_app/presentation/widgets/image_detector.dart';
+import 'package:chat_app/presentation/cubit/auth/auth_cubit.dart';
+import 'package:chat_app/presentation/cubit/auth/auth_state.dart';
+import 'package:chat_app/presentation/widgets/coninue_with_google_button.dart';
+import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:chat_app/utils/routes.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toastification/toastification.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -123,6 +122,7 @@ class LoginPage extends StatelessWidget {
                             controller: _passwordController,
                             validator: _passwordValidator,
                             onChanged: _passwordValidator,
+                            obscureText: true,
                             autocorrect: false,
                             cursorColor: AppColors.primaryColor,
                             decoration: InputDecoration(
@@ -223,44 +223,36 @@ class LoginPage extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    ElevatedButton(
-                      onPressed: () async {
-                        final GoogleAuthDataSource googleAuthDataSource =
-                            GoogleAuthDataSource(
-                              FirebaseAuth.instance,
-                              GoogleSignIn(),
-                            );
-                        final AuthRepository authRepo = AuthRepositoryImpl(
-                          googleAuthDataSource,
-                        );
-                        final signInWithGoogle = SignInWithGoogle(authRepo);
-                        await signInWithGoogle.call();
-                        context.router.replace(const HomeRoute());
+                    BlocListener<AuthCubit, AuthStates>(
+                      listener: (context, state) {
+                        if (state is AuthFailure) {
+                          showToastification(
+                            context,
+                            "Signin Failed",
+                            Colors.red,
+                            ToastificationType.error,
+                          );
+                        }
+                        if (state is AuthSuccess) {
+                          showToastification(
+                            context,
+                            "Loged in Successfully",
+                            Colors.green,
+                            ToastificationType.success,
+                          );
+                          context.router.replace(const HomeRoute());
+                        }
                       },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(0, 60),
-                        overlayColor: Colors.black12,
-                        backgroundColor: Colors.grey[200],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        elevation: 2,
-                        shadowColor: Colors.transparent,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          imageDetector(AppImages.googleLogo, size: 35),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Sign in with Google',
-                            style: TextStyle(
-                              color: AppColors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      child: BlocBuilder<AuthCubit, AuthStates>(
+                        builder: (context, state) {
+                          if (state is AuthLoading) {
+                            return const Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          return continueWithGoogleButton(context);
+                        },
                       ),
                     ),
                     const SizedBox(height: 50),

@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
 import 'package:chat_app/presentation/pages/conversation_page.dart';
 import 'package:chat_app/presentation/pages/home_page.dart';
 import 'package:chat_app/presentation/pages/login_page.dart';

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "40879973580",
+    "firebase_url": "https://yojin-jaka-default-rtdb.firebaseio.com",
+    "project_id": "yojin-jaka",
+    "storage_bucket": "yojin-jaka.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40879973580:android:1fa440b884c16bd0e28e69",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "40879973580-r2tt94423b31kuj6k76oi7st6kntto6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "9752db7b65f296e5c9c0b2bfdc15ccf76b22b85d"
+          }
+        },
+        {
+          "client_id": "40879973580-v13m75n2ijka42t0f6ogvbg3ooievkhc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4fM1I1g8ED9dm7oDvVzYzF3_wTVisoUs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "40879973580-v13m75n2ijka42t0f6ogvbg3ooievkhc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "40879973580-kck57563qve2svg4qpdsnguq3p5fdp8f.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

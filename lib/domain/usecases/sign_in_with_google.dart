@@ -1,11 +1,12 @@
+import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 
 class SignInWithGoogle {
-  final AuthRepository? _authRepository;
+  final AuthRepository _authRepository;
 
   SignInWithGoogle(this._authRepository);
 
-  Future<void> call() async {
-    return await _authRepository!.signInWithGoogle();
+  Future<UserEntity> call() async {
+    return await _authRepository.signInWithGoogle();
   }
 }

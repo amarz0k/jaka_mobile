@@ -41,6 +41,20 @@ class LoginPage extends StatelessWidget {
       return null;
     }
 
+    String? _validatePassword(String? value) {
+      if (value != _passwordController.text) {
+        return 'Passwords do not match';
+      }
+      return null;
+    }
+
+    String? _validateEmail(String? value) {
+      if (value != _emailController.text) {
+        return 'Emails do not match';
+      }
+      return null;
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -90,7 +104,7 @@ class LoginPage extends StatelessWidget {
                           TextFormField(
                             controller: _emailController,
                             validator: _emailValidator,
-                            onChanged: _emailValidator,
+                            onChanged: _validateEmail,
                             autocorrect: false,
                             cursorColor: AppColors.primaryColor,
                             decoration: InputDecoration(
@@ -121,7 +135,7 @@ class LoginPage extends StatelessWidget {
                           TextFormField(
                             controller: _passwordController,
                             validator: _passwordValidator,
-                            onChanged: _passwordValidator,
+                            onChanged: _validatePassword,
                             obscureText: true,
                             autocorrect: false,
                             cursorColor: AppColors.primaryColor,

@@ -20,7 +20,7 @@ class FirebaseDataSource {
 
   Future<UserModel> signInWithGoogle() async {
     try {
-      _initSignWithGoogle();
+      await _initSignWithGoogle();
 
       final GoogleSignInAccount account = await getIt<GoogleSignIn>()
           .authenticate();

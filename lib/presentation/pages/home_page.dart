@@ -8,7 +8,11 @@ import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_state.dart';
 import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_cubit.dart';
 import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_states.dart';
+import 'package:chat_app/presentation/widgets/custom_icon_button.dart';
+import 'package:chat_app/presentation/widgets/friend_request_widget.dart';
+import 'package:chat_app/presentation/widgets/friend_widget.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
+import 'package:chat_app/utils/friends_data_sample.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toastification/toastification.dart';
@@ -78,98 +82,158 @@ class HomePage extends StatelessWidget {
             }
 
             if (state is SuccessState) {
-              name = state.user.name;
+              name = state.user.name.split(' ').first.length > 11
+                  ? '${state.user.name.split(' ').first.substring(0, 11)}...'
+                  : state.user.name.split(' ').first;
 
-              return Scaffold(
-                backgroundColor: Colors.white,
-                appBar: AppBar(
+              return DefaultTabController(
+                length: 2,
+                child: Scaffold(
                   backgroundColor: Colors.white,
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Hello,",
-                        style: TextStyle(
-                          color: Colors.grey.shade400,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                  appBar: AppBar(
+                    toolbarHeight: 120,
+                    backgroundColor: Colors.white,
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Hello,",
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        name,
-                        style: TextStyle(
-                          color: AppColors.lightBlack,
-                          fontSize: 27,
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          name,
+                          style: TextStyle(
+                            color: AppColors.lightBlack,
+                            fontSize: 27,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Row(
+                          children: [
+                            CustomIconButton(
+                              size: 40,
+                              iconColor: AppColors.lightBlack,
+                              borderColor: AppColors.primaryColor,
+                              icon: Icons.search,
+                              onPressed: () {},
+                            ),
+                            const SizedBox(width: 10),
+                            CustomIconButton(
+                              size: 40,
+                              iconColor: AppColors.lightBlack,
+                              borderColor: AppColors.primaryColor,
+                              icon: Icons.person,
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 1,
-                              ),
-                            ),
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.search, size: 22),
-                            ),
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(60),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: TabBar(
+                          dividerColor: Colors.transparent,
+                          overlayColor: WidgetStateProperty.all(
+                            Colors.transparent,
                           ),
-                          const SizedBox(width: 10),
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 1,
-                              ),
-                            ),
-                            child: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.person, size: 22),
-                            ),
+                          indicator: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                        ],
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.grey.shade600,
+                          isScrollable: false,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          tabs: [
+                            const Tab(text: 'All Chats'),
+                            const Tab(text: 'Requests'),
+                          ],
+                        ),
                       ),
                     ),
-                  ],
-                ),
-                body: Center(
-                  child: BlocBuilder<SignOutBloc, SignOutState>(
-                    builder: (context, state) {
-                      if (state is AuthInitialState) {
-                        context.router.replace(const HomeRoute());
-                      }
-                      if (state is AuthFailureState) {
-                        showToastification(
-                          context,
-                          "Signin Failed",
-                          Colors.red,
-                          ToastificationType.error,
-                        );
-                      }
-                      if (state is AuthLoadingState) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      return ElevatedButton(
-                        onPressed: () {
-                          context.read<SignOutBloc>().add(AuthSignOutEvent());
-                        },
-                        child: Text("Sign out"),
-                      );
-                    },
+                  ),
+                  body: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: TabBarView(
+                      children: [
+                        SizedBox(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: 10,
+                            itemBuilder: (context, index) {
+                              return FriendWidget(
+                                logo: dataSample[index]["logo"],
+                                name: dataSample[index]["name"],
+                                lastMessage: dataSample[index]["lastMessage"],
+                                time: dataSample[index]["time"],
+                              );
+                            },
+                          ),
+                        ),
+
+                        SizedBox(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: 10,
+                            itemBuilder: (context, index) {
+                              return FriendRequestWidget(
+                                profilePicture: dataSample[index]["logo"],
+                                name: dataSample[index]["name"],
+                              );
+                            },
+                          ),
+                        ),
+
+                        // BlocBuilder<SignOutBloc, SignOutState>(
+                        //   builder: (context, state) {
+                        //     if (state is AuthInitialState) {
+                        //       context.router.replace(const HomeRoute());
+                        //     }
+                        //     if (state is AuthFailureState) {
+                        //       showToastification(
+                        //         context,
+                        //         "Signin Failed",
+                        //         Colors.red,
+                        //         ToastificationType.error,
+                        //       );
+                        //     }
+                        //     if (state is AuthLoadingState) {
+                        //       return Center(
+                        //         child: CircularProgressIndicator(),
+                        //       );
+                        //     }
+                        //     return ElevatedButton(
+                        //       onPressed: () {
+                        //         context.read<SignOutBloc>().add(
+                        //           AuthSignOutEvent(),
+                        //         );
+                        //       },
+                        //       child: Text("Sign out"),
+                        //     );
+                        //   },
+                        // ),
+                      ],
+                    ),
                   ),
                 ),
               );

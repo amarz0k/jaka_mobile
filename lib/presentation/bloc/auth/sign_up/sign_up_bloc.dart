@@ -1,3 +1,4 @@
+
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/usecases/sign_up_with_email_usecase.dart';

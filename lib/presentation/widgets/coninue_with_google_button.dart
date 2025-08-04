@@ -58,7 +58,7 @@ BlocListener<GoogleSignInBloc, GoogleSignInState> continueWithGoogleButton() {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              imageDetector(AppImages.googleLogo, size: 35),
+              imageDetector(AppImages.googleLogo, 35),
               const SizedBox(width: 10),
               Text(
                 'Continue with Google',

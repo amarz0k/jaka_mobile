@@ -16,6 +16,6 @@ void showToastification(
     primaryColor: color,
     foregroundColor: Colors.white,
     closeOnClick: true,
-    autoCloseDuration: const Duration(seconds: 2),
+    autoCloseDuration: const Duration(seconds: 10),
   );
 }

@@ -6,12 +6,6 @@ class LoadingState extends NameState {}
 
 class InitialState extends NameState {}
 
-class InternetConnectionState extends NameState {
-  final bool isConnected;
-
-  InternetConnectionState({required this.isConnected});
-}
-
 class SuccessState extends NameState {
   final UserEntity user;
 

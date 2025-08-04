@@ -8,6 +8,7 @@ import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_bloc.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
+import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,6 +50,9 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider<NameCubit>(
           create: (_) => NameCubit(userRepository: getIt<UserRepository>()),
+        ),
+        BlocProvider<ConnectivityCubit>(
+          create: (_) => ConnectivityCubit(),
         ),
       ],
       child: ToastificationWrapper(

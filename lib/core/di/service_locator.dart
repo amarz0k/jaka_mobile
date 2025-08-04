@@ -13,6 +13,7 @@ import 'package:chat_app/domain/usecases/sign_in_with_email_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_up_with_email_usecase.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get_it/get_it.dart';
@@ -82,4 +83,6 @@ void setUpServiceLocator() {
   getIt.registerLazySingleton<InternetConnectionChecker>(
     () => InternetConnectionChecker.createInstance(),
   );
+
+  getIt.registerLazySingleton<Connectivity>(() => Connectivity());
 }

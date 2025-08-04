@@ -5,10 +5,10 @@ import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_ev
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class GoogleSignInCubit extends Bloc<GoogleSignInEvent, GoogleSignInState> {
+class GoogleSignInBloc extends Bloc<GoogleSignInEvent, GoogleSignInState> {
   final SignInWithGoogleUsecase _signInWithGoogle;
 
-  GoogleSignInCubit({required AuthRepository authRepository})
+  GoogleSignInBloc({required AuthRepository authRepository})
     : _signInWithGoogle = getIt<SignInWithGoogleUsecase>(),
       super(AuthInitialState()) {
     on<AuthSignInWithGoogleEvent>(_onSignInWithGoogle);

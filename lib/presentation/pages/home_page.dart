@@ -1,11 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
-import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_event.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_state.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
-import 'package:chat_app/presentation/bloc/home/name/name_event.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_state.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
@@ -18,43 +17,43 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dispatch CheckUserDataEvent when the page is first created
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NameCubit>().add(CheckUserDataEvent());
-    });
-
     return BlocConsumer<NameCubit, NameState>(
-      listenWhen: (prev, curr) =>
-          curr is InternetConnectionState && curr.isConnected,
-
+      listenWhen: (previous, current) {
+        if (previous is InternetConnectionState &&
+            current is InternetConnectionState) {
+          return previous.isConnected != current.isConnected;
+        }
+        return false;
+      },
       listener: (context, state) {
-        if (state is InternetConnectionState && state.isConnected) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Back online"),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Back offline"),
-              backgroundColor: Colors.red,
-            ),
-          );
+        if (state is InternetConnectionState) {
+          if (state.isConnected) {
+            showToastification(
+              context,
+              "Internet connection restored",
+              Colors.green,
+              ToastificationType.success,
+            );
+          } else {
+            showToastification(
+              context,
+              "Internet connection lost",
+              Colors.red,
+              ToastificationType.error,
+            );
+          }
         }
       },
       builder: (context, state) {
         final String name;
-        if (state is NameLoadingState) {
+        if (state is LoadingState) {
           return Scaffold(
             backgroundColor: Colors.white,
             body: const Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (state is NameFailureState) {
+        if (state is FailureState) {
           showToastification(
             context,
             "Signin Failed",
@@ -63,7 +62,7 @@ class HomePage extends StatelessWidget {
           );
         }
 
-        if (state is NameSuccessState) {
+        if (state is SuccessState) {
           name = state.user.name;
 
           return Scaffold(
@@ -133,7 +132,7 @@ class HomePage extends StatelessWidget {
               ],
             ),
             body: Center(
-              child: BlocBuilder<SignOutCubit, SignOutState>(
+              child: BlocBuilder<SignOutBloc, SignOutState>(
                 builder: (context, state) {
                   if (state is AuthInitialState) {
                     context.router.replace(const HomeRoute());
@@ -151,7 +150,7 @@ class HomePage extends StatelessWidget {
                   }
                   return ElevatedButton(
                     onPressed: () {
-                      context.read<SignOutCubit>().add(AuthSignOutEvent());
+                      context.read<SignOutBloc>().add(AuthSignOutEvent());
                     },
                     child: Text("Sign out"),
                   );

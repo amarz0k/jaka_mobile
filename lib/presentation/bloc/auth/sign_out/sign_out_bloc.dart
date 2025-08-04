@@ -5,10 +5,10 @@ import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_event.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SignOutCubit extends Bloc<SignOutEvent, SignOutState> {
+class SignOutBloc extends Bloc<SignOutEvent, SignOutState> {
   final SignOutUsecase _signOutUsecase;
 
-  SignOutCubit({required AuthRepository authRepository})
+  SignOutBloc({required AuthRepository authRepository})
     : _signOutUsecase = getIt<SignOutUsecase>(),
       super(AuthInitialState()) {
     on<AuthSignOutEvent>(_onSignOut);

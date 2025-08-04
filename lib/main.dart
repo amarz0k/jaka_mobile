@@ -3,10 +3,10 @@ import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
-import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_cubit.dart';
-import 'package:chat_app/presentation/bloc/auth/login/login_cubit.dart';
-import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_cubit.dart';
-import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_bloc.dart';
+import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
+import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_bloc.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,18 +34,18 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LoginCubit>(
-          create: (_) => LoginCubit(authRepository: getIt<AuthRepository>()),
+        BlocProvider<LoginBloc>(
+          create: (_) => LoginBloc(authRepository: getIt<AuthRepository>()),
         ),
-        BlocProvider<GoogleSignInCubit>(
+        BlocProvider<GoogleSignInBloc>(
           create: (_) =>
-              GoogleSignInCubit(authRepository: getIt<AuthRepository>()),
+              GoogleSignInBloc(authRepository: getIt<AuthRepository>()),
         ),
-        BlocProvider<SignUpCubit>(
-          create: (_) => SignUpCubit(authRepository: getIt<AuthRepository>()),
+        BlocProvider<SignUpBloc>(
+          create: (_) => SignUpBloc(authRepository: getIt<AuthRepository>()),
         ),
-        BlocProvider<SignOutCubit>(
-          create: (_) => SignOutCubit(authRepository: getIt<AuthRepository>()),
+        BlocProvider<SignOutBloc>(
+          create: (_) => SignOutBloc(authRepository: getIt<AuthRepository>()),
         ),
         BlocProvider<NameCubit>(
           create: (_) => NameCubit(userRepository: getIt<UserRepository>()),

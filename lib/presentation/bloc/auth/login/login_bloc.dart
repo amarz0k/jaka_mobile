@@ -5,10 +5,10 @@ import 'package:chat_app/presentation/bloc/auth/login/login_event.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class LoginCubit extends Bloc<LoginEvent, LoginState> {
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final SignInWithEmailUsecase _signInWithEmail;
 
-  LoginCubit({required AuthRepository authRepository})
+  LoginBloc({required AuthRepository authRepository})
     : _signInWithEmail = getIt<SignInWithEmailUsecase>(),
       super(AuthInitialState()) {
     on<AuthSignInWithEmailAndPasswordEvent>(_onSignInWithEmailAndPassword);

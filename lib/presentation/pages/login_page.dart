@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/constants/app_images.dart';
-import 'package:chat_app/presentation/bloc/auth/login/login_cubit.dart';
+import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_event.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_state.dart';
 import 'package:chat_app/presentation/widgets/coninue_with_google_button.dart';
@@ -102,7 +102,7 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 50),
                     Form(
                       key: _formKey,
-                      child: BlocListener<LoginCubit, LoginState>(
+                      child: BlocListener<LoginBloc, LoginState>(
                         listener: (context, state) {
                           if (state is AuthFailureState) {
                             showToastification(
@@ -166,7 +166,7 @@ class LoginPage extends StatelessWidget {
 
                     ElevatedButton(
                       onPressed: () {
-                        context.read<LoginCubit>().add(
+                        context.read<LoginBloc>().add(
                           AuthSignInWithEmailAndPasswordEvent(
                             email: _emailController.text,
                             password: _passwordController.text,

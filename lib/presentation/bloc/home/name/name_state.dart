@@ -2,9 +2,9 @@ import 'package:chat_app/domain/entities/user_entity.dart';
 
 class NameState {}
 
-class NameLoadingState extends NameState {}
+class LoadingState extends NameState {}
 
-class NameInitialState extends NameState {}
+class InitialState extends NameState {}
 
 class InternetConnectionState extends NameState {
   final bool isConnected;
@@ -12,14 +12,14 @@ class InternetConnectionState extends NameState {
   InternetConnectionState({required this.isConnected});
 }
 
-class NameSuccessState extends NameState {
+class SuccessState extends NameState {
   final UserEntity user;
 
-  NameSuccessState({required this.user});
+  SuccessState({required this.user});
 }
 
-class NameFailureState extends NameState {
+class FailureState extends NameState {
   final String? error;
 
-  NameFailureState({required this.error});
+  FailureState({required this.error});
 }

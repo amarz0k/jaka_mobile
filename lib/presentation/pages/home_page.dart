@@ -1,9 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
-import 'package:chat_app/core/auto_route/app_router.dart';
-import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
-import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_event.dart';
-import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_state.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_state.dart';
 import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_cubit.dart';

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
+import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/name/name_state.dart';
 import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_cubit.dart';
@@ -87,7 +88,7 @@ class HomePage extends StatelessWidget {
                 child: Scaffold(
                   backgroundColor: Colors.white,
                   appBar: AppBar(
-                    toolbarHeight: 120,
+                    toolbarHeight: 100,
                     backgroundColor: Colors.white,
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,18 +129,20 @@ class HomePage extends StatelessWidget {
                               iconColor: AppColors.lightBlack,
                               borderColor: AppColors.primaryColor,
                               icon: Icons.person,
-                              onPressed: () {},
+                              onPressed: () {
+                                context.router.push(const ProfileRoute());
+                              },
                             ),
                           ],
                         ),
                       ),
                     ],
                     bottom: PreferredSize(
-                      preferredSize: const Size.fromHeight(60),
+                      preferredSize: const Size.fromHeight(30),
                       child: Container(
                         margin: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 20,
+                          horizontal: 20,
+                          vertical: 5,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
@@ -167,7 +170,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   body: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
                     child: TabBarView(
                       children: [
                         SizedBox(

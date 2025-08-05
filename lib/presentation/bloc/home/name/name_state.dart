@@ -17,3 +17,12 @@ class FailureState extends NameState {
 
   FailureState({required this.error});
 }
+
+class NameUpdatingState extends NameState {}
+
+class NameUpdateSuccessState extends NameState {}
+
+class NameUpdateFailureState extends NameState {
+  final String error;
+  NameUpdateFailureState(this.error);
+}

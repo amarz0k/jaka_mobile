@@ -99,4 +99,17 @@ class UserRepositoryImpl implements UserRepository {
       throw Exception(e.toString());
     }
   }
+
+  @override
+  Future<void> updateUserNotifications(bool value) async {
+    try {
+      final dbRef = await getIt<UserRepository>().getUserDatabaseReference();
+      await dbRef.update({'notifications': value});
+    } catch (e) {
+      throw FirebaseException(
+        plugin: 'updateUserNotifications',
+        message: e.toString(),
+      );
+    }
+  }
 }

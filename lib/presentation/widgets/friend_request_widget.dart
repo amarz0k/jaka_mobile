@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 class FriendRequestWidget extends StatelessWidget {
   final String profilePicture;
   final String name;
+  final double nameFontSize;
   const FriendRequestWidget({
     super.key,
     required this.profilePicture,
     required this.name,
+    this.nameFontSize = 18,
   });
 
   @override
@@ -18,13 +20,7 @@ class FriendRequestWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
       child: Row(
         children: [
-          imageDetector(
-            profilePicture,
-            66,
-            isCircle: true,
-            fit: "cover",
-            radius: 100,
-          ),
+          imageDetector(profilePicture, 66, isCircle: true, radius: 100),
           const SizedBox(width: 10),
 
           Expanded(
@@ -35,7 +31,11 @@ class FriendRequestWidget extends StatelessWidget {
                 children: [
                   Text(
                     name.length > 15 ? '${name.substring(0, 15)}...' : name,
-                    style: TextStyle(fontSize: 18, color: AppColors.lightBlack),
+                    style: TextStyle(
+                      fontSize: nameFontSize,
+                      color: AppColors.lightBlack,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

@@ -63,6 +63,7 @@ class FirebaseDataSource {
         email: userCredential.user!.email!,
         photoUrl: userCredential.user!.photoURL!,
         isOnline: true,
+        notifications: true,
         lastSeen: DateTime.now(),
       );
 

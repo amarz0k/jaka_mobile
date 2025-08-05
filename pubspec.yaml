@@ -71,3 +71,16 @@ flutter:
       fonts:
         - asset: assets/fonts/nanami/Nanami.ttf
           weight: 400
+
+    - family: TTCommons
+      fonts:
+        - asset: assets/fonts/tt_commons/TT Commons Light.otf
+          weight: 300
+        - asset: assets/fonts/tt_commons/TT Commons Regular.otf
+          weight: 400
+        - asset: assets/fonts/tt_commons/TT Commons Medium.otf
+          weight: 500
+        - asset: assets/fonts/tt_commons/TT Commons DemiBold.otf
+          weight: 600
+        - asset: assets/fonts/tt_commons/TT Commons Bold.otf
+          weight: 700

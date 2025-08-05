@@ -12,4 +12,6 @@ abstract class UserRepository {
   Future<DatabaseReference> getUserDatabaseReference();
 
   Future<UserEntity> getUserFromLocalStorage();
+
+  Future<void> updateUserNotifications(bool value);
 }

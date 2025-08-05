@@ -1,0 +1,37 @@
+                GestureDetector(
+                  onTap: () {},
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        imageDetector(
+                          state.user.photoUrl!,
+                          100,
+                          isCircle: true,
+                          radius: 100,
+                        ),
+                        Positioned(
+                          bottom: 2,
+                          right: 2,
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: IconButton(
+                              iconSize: 15,
+                              color: Colors.white,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                shape: CircleBorder(),
+                                overlayColor: Colors.transparent,
+                              ),
+                              onPressed: () {},
+                              icon: Icon((Icons.edit)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                ============================================

@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
-import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
-import 'package:chat_app/presentation/bloc/home/name/name_state.dart';
-import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_cubit.dart';
-import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_states.dart';
+import 'package:chat_app/core/auto_route/app_router.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
+import 'package:chat_app/presentation/bloc/connectivity/connectivity_cubit.dart';
+import 'package:chat_app/presentation/bloc/connectivity/connectivity_states.dart';
 import 'package:chat_app/presentation/widgets/custom_icon_button.dart';
 import 'package:chat_app/presentation/widgets/friend_request_widget.dart';
 import 'package:chat_app/presentation/widgets/friend_widget.dart';
+import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:chat_app/utils/friends_data_sample.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +59,7 @@ class HomePage extends StatelessWidget {
       },
 
       builder: (context, state) {
-        return BlocBuilder<NameCubit, NameState>(
+        return BlocBuilder<UserDataCubit, UserDataState>(
           builder: (context, state) {
             final String name;
 
@@ -96,7 +98,7 @@ class HomePage extends StatelessWidget {
                           "Hello,",
                           style: TextStyle(
                             color: Colors.grey.shade400,
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -104,7 +106,7 @@ class HomePage extends StatelessWidget {
                           name,
                           style: TextStyle(
                             color: AppColors.lightBlack,
-                            fontSize: 27,
+                            fontSize: 30,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -124,11 +126,18 @@ class HomePage extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             CustomIconButton(
-                              size: 40,
+                              size: 45,
                               iconColor: AppColors.lightBlack,
-                              borderColor: AppColors.primaryColor,
-                              icon: Icons.person,
-                              onPressed: () {},
+                              borderColor: Colors.transparent,
+                              isIcon: true,
+                              onPressed: () =>
+                                  context.router.push(const SettingsRoute()),
+                              widget: imageDetector(
+                                state.user.photoUrl!,
+                                100,
+                                isCircle: true,
+                                radius: 100,
+                              ),
                             ),
                           ],
                         ),
@@ -159,8 +168,24 @@ class HomePage extends StatelessWidget {
                           isScrollable: false,
                           indicatorSize: TabBarIndicatorSize.tab,
                           tabs: [
-                            const Tab(text: 'All Chats'),
-                            const Tab(text: 'Requests'),
+                            const Tab(
+                              child: Text(
+                                'All Chats',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const Tab(
+                              child: Text(
+                                'Requests',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -181,6 +206,8 @@ class HomePage extends StatelessWidget {
                                 name: dataSample[index]["name"],
                                 lastMessage: dataSample[index]["lastMessage"],
                                 time: dataSample[index]["time"],
+                                nameFontSize: 20,
+                                lastMessageFontSize: 16,
                               );
                             },
                           ),
@@ -200,34 +227,6 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
 
-                        // BlocBuilder<SignOutBloc, SignOutState>(
-                        //   builder: (context, state) {
-                        //     if (state is AuthInitialState) {
-                        //       context.router.replace(const HomeRoute());
-                        //     }
-                        //     if (state is AuthFailureState) {
-                        //       showToastification(
-                        //         context,
-                        //         "Signin Failed",
-                        //         Colors.red,
-                        //         ToastificationType.error,
-                        //       );
-                        //     }
-                        //     if (state is AuthLoadingState) {
-                        //       return Center(
-                        //         child: CircularProgressIndicator(),
-                        //       );
-                        //     }
-                        //     return ElevatedButton(
-                        //       onPressed: () {
-                        //         context.read<SignOutBloc>().add(
-                        //           AuthSignOutEvent(),
-                        //         );
-                        //       },
-                        //       child: Text("Sign out"),
-                        //     );
-                        //   },
-                        // ),
                       ],
                     ),
                   ),

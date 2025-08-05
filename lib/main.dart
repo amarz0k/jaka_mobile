@@ -7,8 +7,9 @@ import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_bl
 import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_up/sign_up_bloc.dart';
-import 'package:chat_app/presentation/bloc/home/name/name_cubit.dart';
-import 'package:chat_app/presentation/bloc/internet_connection_checker/connectivity_cubit.dart';
+import 'package:chat_app/presentation/bloc/home/settings/settings_cubit.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
+import 'package:chat_app/presentation/bloc/connectivity/connectivity_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,17 +49,24 @@ class MainApp extends StatelessWidget {
         BlocProvider<SignOutBloc>(
           create: (_) => SignOutBloc(authRepository: getIt<AuthRepository>()),
         ),
-        BlocProvider<NameCubit>(
-          create: (_) => NameCubit(userRepository: getIt<UserRepository>()),
-        ),
-        BlocProvider<ConnectivityCubit>(
-          create: (_) => ConnectivityCubit(),
+
+        BlocProvider<UserDataCubit>(create: (_) => getIt<UserDataCubit>()),
+
+        BlocProvider<ConnectivityCubit>(create: (_) => ConnectivityCubit()),
+
+        BlocProvider<SettingsCubit>(
+          create: (_) => SettingsCubit(userRepository: getIt<UserRepository>()),
         ),
       ],
       child: ToastificationWrapper(
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(fontFamily: 'Nanami', useMaterial3: true),
+          theme: ThemeData(
+            fontFamily: 'TTCommons',
+            useMaterial3: true,
+            scaffoldBackgroundColor: Colors.white,
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+          ),
           routerConfig: _appRouter.config(),
         ),
       ),

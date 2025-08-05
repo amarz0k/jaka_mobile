@@ -22,6 +22,7 @@ mixin _$UserEntity {
   String? get password => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
   bool get isOnline => throw _privateConstructorUsedError;
+  bool get notifications => throw _privateConstructorUsedError;
   DateTime get lastSeen => throw _privateConstructorUsedError;
 
   /// Create a copy of UserEntity
@@ -44,6 +45,7 @@ abstract class $UserEntityCopyWith<$Res> {
       String? password,
       String? photoUrl,
       bool isOnline,
+      bool notifications,
       DateTime lastSeen});
 }
 
@@ -68,6 +70,7 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
     Object? password = freezed,
     Object? photoUrl = freezed,
     Object? isOnline = null,
+    Object? notifications = null,
     Object? lastSeen = null,
   }) {
     return _then(_value.copyWith(
@@ -95,6 +98,10 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
+      notifications: null == notifications
+          ? _value.notifications
+          : notifications // ignore: cast_nullable_to_non_nullable
+              as bool,
       lastSeen: null == lastSeen
           ? _value.lastSeen
           : lastSeen // ignore: cast_nullable_to_non_nullable
@@ -118,6 +125,7 @@ abstract class _$$UserEntityImplCopyWith<$Res>
       String? password,
       String? photoUrl,
       bool isOnline,
+      bool notifications,
       DateTime lastSeen});
 }
 
@@ -140,6 +148,7 @@ class __$$UserEntityImplCopyWithImpl<$Res>
     Object? password = freezed,
     Object? photoUrl = freezed,
     Object? isOnline = null,
+    Object? notifications = null,
     Object? lastSeen = null,
   }) {
     return _then(_$UserEntityImpl(
@@ -167,6 +176,10 @@ class __$$UserEntityImplCopyWithImpl<$Res>
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
+      notifications: null == notifications
+          ? _value.notifications
+          : notifications // ignore: cast_nullable_to_non_nullable
+              as bool,
       lastSeen: null == lastSeen
           ? _value.lastSeen
           : lastSeen // ignore: cast_nullable_to_non_nullable
@@ -185,6 +198,7 @@ class _$UserEntityImpl implements _UserEntity {
       this.password,
       this.photoUrl,
       this.isOnline = false,
+      this.notifications = true,
       required this.lastSeen});
 
   @override
@@ -201,11 +215,14 @@ class _$UserEntityImpl implements _UserEntity {
   @JsonKey()
   final bool isOnline;
   @override
+  @JsonKey()
+  final bool notifications;
+  @override
   final DateTime lastSeen;
 
   @override
   String toString() {
-    return 'UserEntity(id: $id, name: $name, email: $email, password: $password, photoUrl: $photoUrl, isOnline: $isOnline, lastSeen: $lastSeen)';
+    return 'UserEntity(id: $id, name: $name, email: $email, password: $password, photoUrl: $photoUrl, isOnline: $isOnline, notifications: $notifications, lastSeen: $lastSeen)';
   }
 
   @override
@@ -222,13 +239,15 @@ class _$UserEntityImpl implements _UserEntity {
                 other.photoUrl == photoUrl) &&
             (identical(other.isOnline, isOnline) ||
                 other.isOnline == isOnline) &&
+            (identical(other.notifications, notifications) ||
+                other.notifications == notifications) &&
             (identical(other.lastSeen, lastSeen) ||
                 other.lastSeen == lastSeen));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, name, email, password, photoUrl, isOnline, lastSeen);
+  int get hashCode => Object.hash(runtimeType, id, name, email, password,
+      photoUrl, isOnline, notifications, lastSeen);
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -247,6 +266,7 @@ abstract class _UserEntity implements UserEntity {
       final String? password,
       final String? photoUrl,
       final bool isOnline,
+      final bool notifications,
       required final DateTime lastSeen}) = _$UserEntityImpl;
 
   @override
@@ -261,6 +281,8 @@ abstract class _UserEntity implements UserEntity {
   String? get photoUrl;
   @override
   bool get isOnline;
+  @override
+  bool get notifications;
   @override
   DateTime get lastSeen;
 

@@ -8,12 +8,17 @@ class FriendWidget extends StatelessWidget {
   final String lastMessage;
   final String time;
 
+  final double nameFontSize;
+  final double lastMessageFontSize;
+
   const FriendWidget({
     super.key,
     required this.logo,
     required this.name,
     required this.lastMessage,
     required this.time,
+    this.nameFontSize = 18,
+    this.lastMessageFontSize = 14,
   });
 
   @override
@@ -28,13 +33,7 @@ class FriendWidget extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              imageDetector(
-                logo,
-                66,
-                isCircle: true,
-                fit: "cover",
-                radius: 100,
-              ),
+              imageDetector(logo, 66, isCircle: true, radius: 100),
               const SizedBox(width: 10),
 
               Expanded(
@@ -51,14 +50,15 @@ class FriendWidget extends StatelessWidget {
                                 ? '${name.substring(0, 15)}...'
                                 : name,
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: nameFontSize,
                               color: AppColors.lightBlack,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           Text(
                             time,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 16,
                               color: Colors.grey.shade400,
                             ),
                           ),
@@ -71,8 +71,9 @@ class FriendWidget extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: lastMessageFontSize,
                           color: Colors.grey.shade400,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],

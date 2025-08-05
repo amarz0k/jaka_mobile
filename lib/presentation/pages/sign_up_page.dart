@@ -142,7 +142,7 @@ class SignUpPage extends StatelessWidget {
                   top: 20,
                   left: 25,
                   right: 25,
-                  bottom: 20, // Increased bottom padding
+                  bottom: 50,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,

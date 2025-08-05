@@ -33,6 +33,10 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
   final bool isOnline;
 
   @HiveField(6)
+  @JsonKey(name: 'notifications')
+  final bool notifications;
+
+  @HiveField(7)
   @JsonKey(name: 'lastSeen')
   final DateTime lastSeen;
 
@@ -43,6 +47,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     this.password,
     this.photoUrl,
     this.isOnline = false,
+    this.notifications = true,
     required this.lastSeen,
   });
 
@@ -57,6 +62,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     password: password,
     photoUrl: photoUrl,
     isOnline: isOnline,
+    notifications: notifications,
     lastSeen: lastSeen,
   );
 

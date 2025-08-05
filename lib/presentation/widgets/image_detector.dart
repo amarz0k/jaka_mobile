@@ -6,7 +6,8 @@ Widget imageDetector(
   double size, {
   bool isCircle = false,
   double radius = 0,
-  String fit = "cover",
+  BoxFit fit = BoxFit.cover,
+  Color? color,
 }) {
   if (isCircle) {
     return ClipRRect(
@@ -25,16 +26,18 @@ Widget imageDetector(
       logo,
       width: size,
       height: size,
-      fit: fit == "cover" ? BoxFit.cover : BoxFit.contain,
+      fit: fit,
       errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      color: color,
     );
   } else {
     return Image.asset(
       logo,
       width: size,
       height: size,
-      fit: fit == "cover" ? BoxFit.cover : BoxFit.contain,
+      fit: fit,
       errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+      color: color,
     );
   }
 }

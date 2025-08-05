@@ -21,7 +21,7 @@ class SignOutBloc extends Bloc<SignOutEvent, SignOutState> {
     emit(AuthLoadingState());
     try {
       await _signOutUsecase.call();
-      emit(AuthInitialState());
+      emit(AuthSuccessState());
     } catch (e) {
       emit(AuthFailureState(error: e.toString()));
     }

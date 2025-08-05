@@ -13,6 +13,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       password: json['password'] as String?,
       photoUrl: json['photoUrl'] as String?,
       isOnline: json['isOnline'] as bool? ?? false,
+      notifications: json['notifications'] as bool? ?? true,
       lastSeen: DateTime.parse(json['lastSeen'] as String),
     );
 
@@ -23,5 +24,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'password': instance.password,
       'photoUrl': instance.photoUrl,
       'isOnline': instance.isOnline,
+      'notifications': instance.notifications,
       'lastSeen': instance.lastSeen.toIso8601String(),
     };

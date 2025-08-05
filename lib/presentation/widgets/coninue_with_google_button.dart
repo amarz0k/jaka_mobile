@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
-import 'package:chat_app/constants/app_images.dart';
+import 'package:chat_app/constants/app_icons.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_event.dart';
@@ -58,7 +58,7 @@ BlocListener<GoogleSignInBloc, GoogleSignInState> continueWithGoogleButton() {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              imageDetector(AppImages.googleLogo, 35),
+              imageDetector(AppIcons.googleLogo, 35),
               const SizedBox(width: 10),
               Text(
                 'Continue with Google',

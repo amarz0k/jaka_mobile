@@ -15,9 +15,9 @@ class UserProfilePage extends StatelessWidget {
         title: Text(
           "User Profile",
           style: TextStyle(
-            fontSize: 30,
+            fontSize: 25,
             color: AppColors.lightBlack,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),

@@ -14,4 +14,6 @@ abstract class UserRepository {
   Future<UserEntity> getUserFromLocalStorage();
 
   Future<void> updateUserNotifications(bool value);
+
+  Future<void> updateUserPassword(String password);
 }

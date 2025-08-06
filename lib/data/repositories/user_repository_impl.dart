@@ -112,4 +112,17 @@ class UserRepositoryImpl implements UserRepository {
       );
     }
   }
+
+  @override
+  Future<void> updateUserPassword(String password) async {
+    try {
+      final dbRef = await getIt<UserRepository>().getUserDatabaseReference();
+      await dbRef.update({'password': password});
+    } catch (e) {
+      throw FirebaseException(
+        plugin: 'updateUserPassword',
+        message: e.toString(),
+      );
+    }
+  }
 }

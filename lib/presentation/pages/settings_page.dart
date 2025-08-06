@@ -8,7 +8,9 @@ import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_state.dart';
 import 'package:chat_app/presentation/bloc/home/settings/settings_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
+import 'package:chat_app/presentation/widgets/change_password_bottom_sheet.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
+import 'package:chat_app/presentation/widgets/set_password_bottom_sheet.dart';
 import 'package:chat_app/presentation/widgets/setting_tab.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
@@ -147,8 +149,14 @@ class SettingsPage extends StatelessWidget {
 
                   SettingTab(
                     icon: AppIcons.lock,
-                    label: 'Change Passowrd',
-                    onTap: () {},
+                    label: state.user.password == ""
+                        ? "Set Password"
+                        : 'Change Passowrd',
+                    onTap: () {
+                      state.user.password == ""
+                          ? setPasswordBottomSheet(context)
+                          : changePassordBottomSheet(context);
+                    },
                   ),
                   Divider(height: 1),
 

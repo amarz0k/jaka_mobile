@@ -62,6 +62,7 @@ class FirebaseDataSource {
         name: name,
         email: userCredential.user!.email!,
         photoUrl: userCredential.user!.photoURL!,
+        password: "",
         isOnline: true,
         notifications: true,
         lastSeen: DateTime.now(),

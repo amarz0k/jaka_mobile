@@ -2,7 +2,6 @@ import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
-import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
@@ -54,9 +53,7 @@ class MainApp extends StatelessWidget {
 
         BlocProvider<ConnectivityCubit>(create: (_) => ConnectivityCubit()),
 
-        BlocProvider<SettingsCubit>(
-          create: (_) => SettingsCubit(userRepository: getIt<UserRepository>()),
-        ),
+        BlocProvider<SettingsCubit>(create: (_) => getIt<SettingsCubit>()),
       ],
       child: ToastificationWrapper(
         child: MaterialApp.router(

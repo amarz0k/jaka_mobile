@@ -44,7 +44,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     required this.id,
     required this.name,
     required this.email,
-    this.password,
+    required this.password,
     this.photoUrl,
     this.isOnline = false,
     this.notifications = true,

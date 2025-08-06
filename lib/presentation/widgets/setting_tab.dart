@@ -28,7 +28,7 @@ class SettingTab extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 20),
         child: Row(
           children: [
-            imageDetector(icon, 34, color: Colors.grey.shade500),
+            imageDetector(icon, 30, color: Colors.grey.shade500),
             const SizedBox(width: 30),
             Text(
               label,

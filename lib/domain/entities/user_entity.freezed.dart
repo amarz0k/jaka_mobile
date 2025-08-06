@@ -195,7 +195,7 @@ class _$UserEntityImpl implements _UserEntity {
       {required this.id,
       required this.name,
       required this.email,
-      this.password,
+      this.password = null,
       this.photoUrl,
       this.isOnline = false,
       this.notifications = true,
@@ -208,6 +208,7 @@ class _$UserEntityImpl implements _UserEntity {
   @override
   final String email;
   @override
+  @JsonKey()
   final String? password;
   @override
   final String? photoUrl;

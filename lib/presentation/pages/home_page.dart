@@ -6,6 +6,7 @@ import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:chat_app/presentation/bloc/connectivity/connectivity_cubit.dart';
 import 'package:chat_app/presentation/bloc/connectivity/connectivity_states.dart';
 import 'package:chat_app/presentation/widgets/custom_icon_button.dart';
+import 'package:chat_app/presentation/widgets/custom_text_field.dart';
 import 'package:chat_app/presentation/widgets/friend_request_widget.dart';
 import 'package:chat_app/presentation/widgets/friend_widget.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
@@ -21,6 +22,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _addFriendController = TextEditingController();
+
     return BlocConsumer<ConnectivityCubit, ConnectivityState>(
       listenWhen: (previous, current) {
         return (current is ConnectivityConnected &&
@@ -89,7 +92,7 @@ class HomePage extends StatelessWidget {
                 child: Scaffold(
                   backgroundColor: Colors.white,
                   appBar: AppBar(
-                    toolbarHeight: 120,
+                    toolbarHeight: 170,
                     backgroundColor: Colors.white,
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,12 +135,19 @@ class HomePage extends StatelessWidget {
                               isIcon: true,
                               onPressed: () =>
                                   context.router.push(const SettingsRoute()),
-                              widget: imageDetector(
-                                state.user.photoUrl!,
-                                100,
-                                isCircle: true,
-                                radius: 100,
-                              ),
+                              widget: state.user.photoUrl != null
+                                  ? imageDetector(
+                                      state.user.photoUrl!,
+                                      100,
+                                      isCircle: true,
+                                      radius: 100,
+                                    )
+                                  : imageDetector(
+                                      "https://via.placeholder.com/150",
+                                      100,
+                                      isCircle: true,
+                                      radius: 100,
+                                    ),
                             ),
                           ],
                         ),
@@ -145,49 +155,86 @@ class HomePage extends StatelessWidget {
                     ],
                     bottom: PreferredSize(
                       preferredSize: const Size.fromHeight(60),
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 20,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: TabBar(
-                          dividerColor: Colors.transparent,
-                          overlayColor: WidgetStateProperty.all(
-                            Colors.transparent,
-                          ),
-                          indicator: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          labelColor: Colors.white,
-                          unselectedLabelColor: Colors.grey.shade600,
-                          isScrollable: false,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          tabs: [
-                            const Tab(
-                              child: Text(
-                                'All Chats',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 30,
+                              vertical: 20,
                             ),
-                            const Tab(
-                              child: Text(
-                                'Requests',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(30),
                             ),
-                          ],
-                        ),
+                            child: TabBar(
+                              dividerColor: Colors.transparent,
+                              overlayColor: WidgetStateProperty.all(
+                                Colors.transparent,
+                              ),
+                              indicator: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              labelColor: Colors.white,
+                              unselectedLabelColor: Colors.grey.shade600,
+                              isScrollable: false,
+                              indicatorSize: TabBarIndicatorSize.tab,
+                              tabs: [
+                                const Tab(
+                                  child: Text(
+                                    'All Chats',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const Tab(
+                                  child: Text(
+                                    'Requests',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextField(
+                                    hintText: "Add Friend",
+                                    textEditingController: _addFriendController,
+                                    errorText: null,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                IconButton(
+                                  onPressed: () {},
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor,
+                                    overlayColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                  ),
+                                  padding: EdgeInsets.all(13),
+                                  icon: Icon(
+                                    Icons.person_add_rounded,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -213,20 +260,72 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
 
-                        SizedBox(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: 10,
-                            itemBuilder: (context, index) {
-                              return FriendRequestWidget(
-                                profilePicture: dataSample[index]["logo"],
-                                name: dataSample[index]["name"],
-                              );
-                            },
+                        SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Incoming Requests",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return FriendRequestWidget(
+                                    profilePicture: dataSample[index]["logo"],
+                                    name: dataSample[index]["name"],
+                                    isIncoming: true,
+                                    onAccept: () {},
+                                    onReject: () {},
+                                  );
+                                },
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Outgoing Requests",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return FriendRequestWidget(
+                                    profilePicture: dataSample[index]["logo"],
+                                    name: dataSample[index]["name"],
+                                    isIncoming: false,
+                                    onReject: () {
+                                      showToastification(
+                                        context,
+                                        "Request Rejected",
+                                        Colors.red,
+                                        ToastificationType.error,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ),
-
                       ],
                     ),
                   ),

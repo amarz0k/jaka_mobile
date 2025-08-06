@@ -138,7 +138,8 @@ class FirebaseDataSource {
         name: name,
         email: email,
         password: password,
-        photoUrl: null,
+        photoUrl:
+            "https://ui-avatars.com/api/?name=${name.replaceAll(' ', '+')}&background=4e40d1&color=fff&size=128",
         isOnline: true,
         lastSeen: DateTime.now(),
       );

@@ -97,6 +97,4 @@ void setUpServiceLocator() {
   getIt.registerFactory<SettingsCubit>(
     () => SettingsCubit(userRepository: getIt<UserRepository>()),
   );
-
-  
 }

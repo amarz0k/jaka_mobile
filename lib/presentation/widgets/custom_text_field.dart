@@ -2,21 +2,23 @@ import 'package:chat_app/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  final String label;
+  final String? label;
   final String hintText;
   final TextEditingController textEditingController;
   final String? errorText;
   final Function(String value)? onChanged;
   final bool? isValid;
+  final bool? obscureText;
 
   const CustomTextField({
     super.key,
-    required this.label,
+    this.label,
     required this.hintText,
     required this.textEditingController,
     required this.errorText,
     this.onChanged,
     this.isValid = false,
+    this.obscureText = false,
   });
 
   @override
@@ -24,7 +26,7 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: textEditingController,
       onChanged: onChanged,
-      obscureText: true,
+      obscureText: obscureText ?? false,
       decoration: InputDecoration(
         floatingLabelBehavior: FloatingLabelBehavior.always,
         labelText: label,
@@ -37,18 +39,18 @@ class CustomTextField extends StatelessWidget {
         hintText: hintText,
         errorText: errorText,
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(100),
           borderSide: BorderSide(
             color: isValid == true ? Colors.green : AppColors.primaryColor,
             width: 2,
           ),
         ),
-
+        contentPadding: EdgeInsets.symmetric(horizontal: 20),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(100),
           borderSide: BorderSide(
             color: isValid == true ? Colors.green : Colors.grey,
-            width: isValid == true ? 2 : 1,
+            width: isValid == true ? 2 : 2,
           ),
         ),
 

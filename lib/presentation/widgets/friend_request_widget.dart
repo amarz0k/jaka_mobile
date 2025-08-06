@@ -7,11 +7,17 @@ class FriendRequestWidget extends StatelessWidget {
   final String profilePicture;
   final String name;
   final double nameFontSize;
+  final bool isIncoming;
+  final Function()? onAccept;
+  final Function()? onReject;
   const FriendRequestWidget({
     super.key,
     required this.profilePicture,
     required this.name,
     this.nameFontSize = 18,
+    required this.isIncoming,
+    this.onAccept,
+    this.onReject,
   });
 
   @override
@@ -41,21 +47,32 @@ class FriendRequestWidget extends StatelessWidget {
               ),
             ),
           ),
-          CustomIconButton(
-            size: 40,
-            iconColor: Colors.green,
-            borderColor: Colors.green,
-            icon: Icons.check,
-            onPressed: () {},
-          ),
-          const SizedBox(width: 10),
-          CustomIconButton(
-            size: 40,
-            iconColor: Colors.red,
-            borderColor: Colors.red,
-            icon: Icons.close,
-            onPressed: () {},
-          ),
+          if (isIncoming) ...[
+            CustomIconButton(
+              size: 40,
+              iconColor: Colors.green,
+              borderColor: Colors.green,
+              icon: Icons.check,
+              onPressed: onAccept,
+            ),
+            const SizedBox(width: 10),
+            CustomIconButton(
+              size: 40,
+              iconColor: Colors.red,
+              borderColor: Colors.red,
+              icon: Icons.close,
+              onPressed: onReject,
+            ),
+          ],
+          if (!isIncoming) ...[
+            CustomIconButton(
+              size: 40,
+              iconColor: Colors.red,
+              borderColor: Colors.red,
+              icon: Icons.close,
+              onPressed: onReject,
+            ),
+          ],
         ],
       ),
     );

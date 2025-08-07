@@ -63,7 +63,7 @@ Future<dynamic> changePassordBottomSheet(BuildContext context) {
                       // Get current user's password from context
                       final currentUser = context.read<UserDataCubit>().state;
                       String currentPassword = "";
-                      if (currentUser is LoadedState) {
+                      if (currentUser is UserDataLoadedState) {
                         currentPassword = currentUser.user.password ?? "";
                       }
 

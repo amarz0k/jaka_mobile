@@ -59,7 +59,7 @@ class FriendWidget extends StatelessWidget {
                             time,
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey.shade400,
+                              color: Colors.grey.shade500,
                             ),
                           ),
                         ],
@@ -72,7 +72,7 @@ class FriendWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: lastMessageFontSize,
-                          color: Colors.grey.shade400,
+                          color: Colors.grey.shade500,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

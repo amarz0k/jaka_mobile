@@ -1,6 +1,7 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/data/models/user_model.dart';
+import 'package:chat_app/domain/entities/request_entity.dart';
 import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';
@@ -136,7 +137,7 @@ class UserRepositoryImpl implements UserRepository {
         .replaceAll(']', '_');
   }
 
-  Future<String?> getUserById(String customId) async {
+  Future<UserModel?> getUserById(String customId) async {
     final DatabaseReference ref = getIt<FirebaseDatabase>().ref().child(
       'users',
     );
@@ -151,7 +152,7 @@ class UserRepositoryImpl implements UserRepository {
       final userMap = Map<String, dynamic>.from(userEntry.value as Map);
       final user = UserModel.fromJson(userMap);
 
-      return user.id;
+      return user;
     }
 
     return null;
@@ -161,18 +162,18 @@ class UserRepositoryImpl implements UserRepository {
   Future<void> sendFriendRequest(String id) async {
     final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
         .call();
-    final friendId = await getUserById(id);
+    final friend = await getUserById(id);
     final requestId =
-        '${_createSafeFirebasePath(currentUser.id)}_${_createSafeFirebasePath(friendId!)}';
+        '${_createSafeFirebasePath(currentUser.id)}_${_createSafeFirebasePath(friend!.id)}';
 
     final dbRef = getIt<FirebaseDatabase>().ref().child(
       'friendRequests/$requestId',
     );
 
-    if (await requestExists(currentUser.id, friendId)) {
+    if (await requestExists(currentUser.id, friend.id)) {
       throw FirebaseAuthException(
         code: 'REQUEST_EXISTS',
-        message: 'Request already exists',
+        message: 'Request already sent to this user',
       );
     }
 
@@ -185,7 +186,7 @@ class UserRepositoryImpl implements UserRepository {
 
     await dbRef.set({
       'senderId': currentUser.id,
-      'receiverId': friendId,
+      'receiverId': friend.id,
       'status': 'pending',
       'sentAt': DateTime.now().toIso8601String(),
       'acceptedAt': null,
@@ -209,29 +210,73 @@ class UserRepositoryImpl implements UserRepository {
     return snapshot.snapshot.exists || snapshot2.snapshot.exists;
   }
 
+
   @override
-  Future<List<Map<String, dynamic>>> getIncomingRequests() async {
-    final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
-        .call();
-    final dbRef = getIt<FirebaseDatabase>().ref().child('friendRequests');
+  Stream<List<Map<String, String>>> getIncomingRequestsStream() async* {
+    try {
+      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
+          .call();
+      final dbRef = getIt<FirebaseDatabase>().ref().child('friendRequests');
 
-    final snapshot = await dbRef
-        .orderByChild('receiverId')
-        .equalTo(currentUser.id)
-        .get();
+      await for (final event in dbRef.onValue) {
+        if (!event.snapshot.exists) {
+          yield [];
+          continue;
+        }
 
-    if (!snapshot.exists) return [];
+        final List<RequestEntity> incomingRequests = [];
+        final Map<dynamic, dynamic> allRequests =
+            event.snapshot.value as Map<dynamic, dynamic>;
 
-    final Map<dynamic, dynamic> data = Map<dynamic, dynamic>.from(
-      snapshot.value as Map,
-    );
+        allRequests.forEach((requestId, requestData) {
+          final Map<String, dynamic> request = Map<String, dynamic>.from(
+            requestData as Map,
+          );
 
-    return data.entries.map((entry) {
-      final Map<String, dynamic> request = Map<String, dynamic>.from(
-        entry.value,
+          // Check if this request is for the current user (they are the receiver)
+          if (request['receiverId'] == currentUser.id &&
+              request['status'] == 'pending') {
+            incomingRequests.add(
+              RequestEntity(
+                senderId: request['senderId'] as String,
+                receiverId: request['receiverId'] as String,
+                sentAt: request['sentAt'] as String,
+                status: request['status'] as String,
+              ),
+            );
+          }
+        });
+
+        // Sort by sentAt timestamp (most recent first)
+        incomingRequests.sort((a, b) => b.sentAt.compareTo(a.sentAt));
+
+        List<Map<String, String>> incomingRequestsData = [];
+
+        // Get friend data for each request
+        for (final request in incomingRequests) {
+          try {
+            final friend = await getUserById(request.senderId);
+            if (friend != null) {
+              incomingRequestsData.add({
+                'friendPhotoUrl': friend.photoUrl ?? '',
+                'friendName': friend.name,
+                'senderId': request.senderId,
+                'sentAt': request.sentAt,
+              });
+            }
+          } catch (e) {
+            // Log error but continue with other requests
+            print('Error fetching friend data for ${request.senderId}: $e');
+          }
+        }
+
+        yield incomingRequestsData;
+      }
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'GET_REQUESTS_STREAM_FAILED',
+        message: 'Failed to get incoming requests stream: ${e.toString()}',
       );
-      request['uuid'] = entry.key; // Add the Firebase-generated key
-      return request;
-    }).toList();
+    }
   }
 }

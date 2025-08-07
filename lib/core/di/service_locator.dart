@@ -5,8 +5,9 @@ import 'package:chat_app/data/repositories/auth_repository_impl.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
-import 'package:chat_app/domain/usecases/get_user_from_local_database_usecase.dart';
+import 'package:chat_app/domain/usecases/get_incoming_requests_stream_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dart';
+import 'package:chat_app/domain/usecases/get_user_from_local_database_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_local_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_realtime_database_usecase.dart';
@@ -99,6 +100,10 @@ void setUpServiceLocator() {
     () => GetUserFromRealtimeDatabaseUsecase(getIt<UserRepository>()),
   );
 
+  getIt.registerLazySingleton<GetIncomingRequestsStreamUsecase>(
+    () => GetIncomingRequestsStreamUsecase(getIt<UserRepository>()),
+  );
+
   // others
   getIt.registerFactory<UserDataCubit>(
     () => UserDataCubit(userRepository: getIt<UserRepository>()),
@@ -107,5 +112,4 @@ void setUpServiceLocator() {
   getIt.registerFactory<SettingsCubit>(
     () => SettingsCubit(userRepository: getIt<UserRepository>()),
   );
-
 }

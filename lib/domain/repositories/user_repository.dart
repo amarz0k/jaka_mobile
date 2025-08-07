@@ -19,5 +19,5 @@ abstract class UserRepository {
 
   Future<void> sendFriendRequest(String id);
 
-  Future<List<Map<String, dynamic>>> getIncomingRequests();
+  Stream<List<Map<String, String>>> getIncomingRequestsStream();
 }

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
+import 'package:chat_app/presentation/bloc/home/friends/friends_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:chat_app/presentation/bloc/connectivity/connectivity_cubit.dart';
@@ -60,9 +61,28 @@ class HomePage extends StatelessWidget {
           );
         }
       },
-
       builder: (context, state) {
-        return BlocBuilder<UserDataCubit, UserDataState>(
+        return BlocConsumer<UserDataCubit, UserDataState>(
+          listenWhen: (previous, current) => current is FailureState,
+          listener: (context, state) {
+            if (state is FailureState) {
+              showToastification(
+                context,
+                state.error!,
+                Colors.red,
+                ToastificationType.error,
+              );
+            }
+
+            if (state is SuccessState) {
+              showToastification(
+                context,
+                state.message!,
+                Colors.green,
+                ToastificationType.success,
+              );
+            }
+          },
           builder: (context, state) {
             final String name;
 
@@ -73,16 +93,7 @@ class HomePage extends StatelessWidget {
               );
             }
 
-            if (state is FailureState) {
-              showToastification(
-                context,
-                "Signin Failed",
-                Colors.red,
-                ToastificationType.error,
-              );
-            }
-
-            if (state is SuccessState) {
+            if (state is LoadedState) {
               name = state.user.name.split(' ').first.length > 11
                   ? '${state.user.name.split(' ').first.substring(0, 11)}...'
                   : state.user.name.split(' ').first;
@@ -217,7 +228,11 @@ class HomePage extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    context.read<FriendsCubit>().addFriend(
+                                      _addFriendController.text,
+                                    );
+                                  },
                                   style: IconButton.styleFrom(
                                     backgroundColor: AppColors.primaryColor,
                                     overlayColor: Colors.white,

@@ -6,10 +6,16 @@ class LoadingState extends UserDataState {}
 
 class InitialState extends UserDataState {}
 
-class SuccessState extends UserDataState {
+class LoadedState extends UserDataState {
   final UserEntity user;
 
-  SuccessState({required this.user});
+  LoadedState({required this.user});
+}
+
+class SuccessState extends UserDataState {
+  final String? message;
+
+  SuccessState({this.message});
 }
 
 class FailureState extends UserDataState {

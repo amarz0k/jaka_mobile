@@ -16,4 +16,8 @@ abstract class UserRepository {
   Future<void> updateUserNotifications(bool value);
 
   Future<void> updateUserPassword(String password);
+
+  Future<void> sendFriendRequest(String id);
+
+  Future<List<Map<String, dynamic>>> getIncomingRequests();
 }

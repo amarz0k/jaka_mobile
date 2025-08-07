@@ -59,7 +59,7 @@ class SettingsPage extends StatelessWidget {
             return Center(child: Text('Failed to load user info'));
           }
 
-          if (state is SuccessState) {
+          if (state is LoadedState) {
             final String name =
                 '${state.user.name.split(' ').first} ${state.user.name.split(' ')[1]}';
 

@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:chat_app/data/datasources/remote/firebase_data_source.dart';
+import 'package:chat_app/data/datasources/remote/firebase_auth_data_source.dart';
 import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';

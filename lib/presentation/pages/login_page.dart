@@ -149,7 +149,8 @@ class LoginPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                          },
                           child: Text(
                             "Forget password?",
                             style: TextStyle(

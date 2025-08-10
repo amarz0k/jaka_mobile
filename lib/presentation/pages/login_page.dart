@@ -4,6 +4,7 @@ import 'package:chat_app/constants/app_images.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_event.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_state.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
 import 'package:chat_app/presentation/widgets/coninue_with_google_button.dart';
 import 'package:chat_app/presentation/widgets/custom_text_form_field.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
@@ -119,6 +120,8 @@ class LoginPage extends StatelessWidget {
                               Colors.green,
                               ToastificationType.success,
                             );
+                            // Initialize UserDataCubit for the new user session
+                            context.read<UserDataCubit>().initialize();
                             context.router.replace(const HomeRoute());
                           }
                         },

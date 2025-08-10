@@ -5,6 +5,7 @@ import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_event.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_state.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,8 @@ BlocListener<GoogleSignInBloc, GoogleSignInState> continueWithGoogleButton() {
           Colors.green,
           ToastificationType.success,
         );
+        // Initialize UserDataCubit for the new user session
+        context.read<UserDataCubit>().initialize();
         context.router.replace(const HomeRoute());
       }
     },

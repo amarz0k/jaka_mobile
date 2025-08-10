@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
+import 'package:chat_app/domain/entities/friend_entity.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:chat_app/presentation/bloc/connectivity/connectivity_cubit.dart';
@@ -80,7 +83,7 @@ class HomePage extends StatelessWidget {
                 ToastificationType.success,
               );
             }
-            
+
             if (state is UserDataLoadedState) {
               // Handle success messages within UserDataLoadedState
               if (state.message != null) {
@@ -91,7 +94,7 @@ class HomePage extends StatelessWidget {
                   ToastificationType.success,
                 );
               }
-              
+
               // Handle error messages within UserDataLoadedState
               if (state.error != null) {
                 showToastification(
@@ -318,15 +321,14 @@ class HomePage extends StatelessWidget {
                                 ),
                                 BlocBuilder<UserDataCubit, UserDataState>(
                                   builder: (context, requestsState) {
-                                    List<Map<String, String>>? incomingRequests;
-                                    
+                                    List<FriendEntity>? incomingRequests;
+
                                     // Extract incoming requests from different state types
                                     if (requestsState is UserDataLoadedState) {
-                                      incomingRequests = requestsState.incomingRequests;
-                                    } else if (requestsState is IncomingRequestsLoadedState) {
-                                      incomingRequests = requestsState.incomingRequests;
+                                      incomingRequests =
+                                          requestsState.incomingRequests;
                                     }
-                                    
+
                                     if (incomingRequests != null) {
                                       if (incomingRequests.isEmpty) {
                                         return Padding(
@@ -340,16 +342,20 @@ class HomePage extends StatelessWidget {
                                           ),
                                         );
                                       }
-                                      
+
                                       return ListView.builder(
                                         shrinkWrap: true,
-                                        physics: const NeverScrollableScrollPhysics(),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
                                         itemCount: incomingRequests.length,
                                         itemBuilder: (context, index) {
-                                          final request = incomingRequests![index];
+                                          final request =
+                                              incomingRequests![index];
                                           return FriendRequestWidget(
-                                            profilePicture: request['friendPhotoUrl'] ?? 'https://via.placeholder.com/150',
-                                            name: request['friendName'] ?? 'Unknown',
+                                            profilePicture:
+                                                request.photoUrl ??
+                                                'https://via.placeholder.com/150',
+                                            name: request.name,
                                             isIncoming: true,
                                             onAccept: () {
                                               // TODO: Implement accept friend request
@@ -361,13 +367,11 @@ class HomePage extends StatelessWidget {
                                               );
                                             },
                                             onReject: () {
-                                              // TODO: Implement reject friend request
-                                              showToastification(
-                                                context,
-                                                "Friend request rejected",
-                                                Colors.red,
-                                                ToastificationType.error,
-                                              );
+                                              context
+                                                  .read<UserDataCubit>()
+                                                  .rejectFriendRequest(
+                                                    request.id,
+                                                  );
                                             },
                                           );
                                         },
@@ -391,7 +395,7 @@ class HomePage extends StatelessWidget {
                                         ),
                                       );
                                     }
-                                    
+
                                     // Default case - show empty state
                                     return Padding(
                                       padding: const EdgeInsets.all(20.0),
@@ -417,23 +421,84 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: 5,
-                                  itemBuilder: (context, index) {
-                                    return FriendRequestWidget(
-                                      profilePicture: dataSample[index]["logo"],
-                                      name: dataSample[index]["name"],
-                                      isIncoming: false,
-                                      onReject: () {
-                                        showToastification(
-                                          context,
-                                          "Request Rejected",
-                                          Colors.red,
-                                          ToastificationType.error,
+                                BlocBuilder<UserDataCubit, UserDataState>(
+                                  builder: (context, requestsState) {
+                                    List<FriendEntity>? outgoingRequests;
+
+                                    // Extract incoming requests from different state types
+                                    if (requestsState is UserDataLoadedState) {
+                                      outgoingRequests =
+                                          requestsState.outgoingRequests;
+                                    }
+
+                                    if (outgoingRequests != null) {
+                                      if (outgoingRequests.isEmpty) {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Text(
+                                            "No outgoing requests",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
                                         );
-                                      },
+                                      }
+
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: outgoingRequests.length,
+                                        itemBuilder: (context, index) {
+                                          final request =
+                                              outgoingRequests![index];
+                                          return FriendRequestWidget(
+                                            profilePicture:
+                                                request.photoUrl ??
+                                                'https://via.placeholder.com/150',
+                                            name: request.name,
+                                            isIncoming: false,
+                                            onReject: () {
+                                              context
+                                                  .read<UserDataCubit>()
+                                                  .rejectFriendRequest(
+                                                    request.id,
+                                                  );
+                                            },
+                                          );
+                                        },
+                                      );
+                                    } else if (requestsState is LoadingState) {
+                                      return const Padding(
+                                        padding: EdgeInsets.all(20.0),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    } else if (requestsState is FailureState) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Text(
+                                          "Failed to load outgoing requests",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      );
+                                    }
+
+                                    // Default case - show empty state
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                        "No outgoing requests",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
                                     );
                                   },
                                 ),

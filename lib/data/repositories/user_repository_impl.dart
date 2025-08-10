@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/data/models/user_model.dart';
@@ -137,6 +139,7 @@ class UserRepositoryImpl implements UserRepository {
         .replaceAll(']', '_');
   }
 
+  @override
   Future<UserModel?> getUserById(String customId) async {
     final DatabaseReference ref = getIt<FirebaseDatabase>().ref().child(
       'users',
@@ -162,13 +165,18 @@ class UserRepositoryImpl implements UserRepository {
   Future<void> sendFriendRequest(String id) async {
     final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
         .call();
+
+    if (currentUser.id == id) {
+      throw FirebaseAuthException(
+        code: 'CURRENT_USER',
+        message: 'Can\'t send friend request to yourself',
+      );
+    }
     final friend = await getUserById(id);
     final requestId =
         '${_createSafeFirebasePath(currentUser.id)}_${_createSafeFirebasePath(friend!.id)}';
 
-    final dbRef = getIt<FirebaseDatabase>().ref().child(
-      'friendRequests/$requestId',
-    );
+    final dbRef = getIt<FirebaseDatabase>().ref().child('friends/$requestId');
 
     if (await requestExists(currentUser.id, friend.id)) {
       throw FirebaseAuthException(
@@ -199,24 +207,23 @@ class UserRepositoryImpl implements UserRepository {
 
     final snapshot = await getIt<FirebaseDatabase>()
         .ref()
-        .child('friendRequests/${safeSenderId}_$safeReceiverId')
+        .child('friends/${safeSenderId}_$safeReceiverId')
         .once();
 
     final snapshot2 = await getIt<FirebaseDatabase>()
         .ref()
-        .child('friendRequests/${safeReceiverId}_$safeSenderId')
+        .child('friends/${safeReceiverId}_$safeSenderId')
         .once();
 
     return snapshot.snapshot.exists || snapshot2.snapshot.exists;
   }
-
 
   @override
   Stream<List<Map<String, String>>> getIncomingRequestsStream() async* {
     try {
       final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
           .call();
-      final dbRef = getIt<FirebaseDatabase>().ref().child('friendRequests');
+      final dbRef = getIt<FirebaseDatabase>().ref().child('friends');
 
       await for (final event in dbRef.onValue) {
         if (!event.snapshot.exists) {
@@ -276,6 +283,111 @@ class UserRepositoryImpl implements UserRepository {
       throw FirebaseAuthException(
         code: 'GET_REQUESTS_STREAM_FAILED',
         message: 'Failed to get incoming requests stream: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Stream<List<Map<String, String>>> getOutgoingRequestsStream() async* {
+    try {
+      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
+          .call();
+      final dbRef = getIt<FirebaseDatabase>().ref().child('friends');
+
+      await for (final event in dbRef.onValue) {
+        if (!event.snapshot.exists) {
+          yield [];
+          continue;
+        }
+
+        final List<RequestEntity> outgoingRequests = [];
+        final Map<dynamic, dynamic> allRequests =
+            event.snapshot.value as Map<dynamic, dynamic>;
+
+        allRequests.forEach((requestId, requestData) {
+          final Map<String, dynamic> request = Map<String, dynamic>.from(
+            requestData as Map,
+          );
+
+          // Check if this request is from the current user (they are the sender)
+          if (request['senderId'] == currentUser.id &&
+              request['status'] == 'pending') {
+            outgoingRequests.add(
+              RequestEntity(
+                senderId: request['senderId'] as String,
+                receiverId: request['receiverId'] as String,
+                sentAt: request['sentAt'] as String,
+                status: request['status'] as String,
+              ),
+            );
+          }
+        });
+
+        // Sort by sentAt timestamp (most recent first)
+        outgoingRequests.sort((a, b) => b.sentAt.compareTo(a.sentAt));
+
+        List<Map<String, String>> outgoingRequestsData = [];
+
+        // Get friend data for each request
+        for (final request in outgoingRequests) {
+          try {
+            final friend = await getUserById(request.receiverId);
+            if (friend != null) {
+              outgoingRequestsData.add({
+                'friendPhotoUrl': friend.photoUrl ?? '',
+                'friendName': friend.name,
+                'receiverId': request.receiverId,
+                'sentAt': request.sentAt,
+              });
+            }
+          } catch (e) {
+            // Log error but continue with other requests
+            print('Error fetching friend data for ${request.receiverId}: $e');
+          }
+        }
+
+        yield outgoingRequestsData;
+      }
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'GET_OUTGOING_REQUESTS_STREAM_FAILED',
+        message: 'Failed to get outgoing requests stream: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<void> rejectFriendRequest(String friendId) async {
+    try {
+      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
+          .call();
+
+      final path1 =
+          'friends/${_createSafeFirebasePath(friendId)}_${_createSafeFirebasePath(currentUser.id)}';
+      final path2 =
+          'friends/${_createSafeFirebasePath(currentUser.id)}_${_createSafeFirebasePath(friendId)}';
+
+      // Remove both possible paths (only one will exist)
+      await getIt<FirebaseDatabase>().ref().child(path1).remove();
+
+      await getIt<FirebaseDatabase>().ref().child(path2).remove();
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'REJECT_FRIEND_REQUEST_FAILED',
+        message: 'Failed to reject friend request: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<DatabaseReference> getFriendsDatabaseReference() async {
+    try {
+      final friendsDbRef = getIt<FirebaseDatabase>().ref().child('friends');
+      return friendsDbRef;
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'GET_FRIEND_DB_REFERENCE_FAILED',
+        message: 'Failed to get friend database reference: ${e.toString()}',
       );
     }
   }

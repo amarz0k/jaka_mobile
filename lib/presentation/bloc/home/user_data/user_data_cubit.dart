@@ -3,149 +3,208 @@ import 'dart:developer';
 
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/data/models/user_model.dart';
+import 'package:chat_app/domain/entities/friend_entity.dart';
+import 'package:chat_app/domain/entities/request_entity.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
-import 'package:chat_app/domain/usecases/get_incoming_requests_stream_usecase.dart';
-// import 'package:chat_app/domain/usecases/get_user_from_local_database_usecase.dart';
+import 'package:chat_app/domain/usecases/get_friends_db_reference_usecase.dart';
+import 'package:chat_app/domain/usecases/get_user_by_id_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dart';
+import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserDataCubit extends Cubit<UserDataState> {
-  // final GetUserFromLocalDatabaseUsecase _getUserFromLocalDatabaseUsecase;
-  final GetUserDatabaseReferenceUsecase _getUserFromRealtimeDatabaseUsecase;
+  final GetUserDatabaseReferenceUsecase _getUserDatabaseReferenceUsecase;
+  final GetFriendsDbReferenceUsecase _getFriendsDbReferenceUsecase;
   final SendFriendRequestUsecase _sendFriendRequestUsecase;
-  StreamSubscription? _userDataSubscription;
-  StreamSubscription? _authStateSubscription;
-  StreamSubscription? _incomingRequestsSubscription;
+  final RejectFriendRequestUsecase _rejectFriendRequestUsecase;
+  final GetUserByIdUsecase _getUserByIdUsecase;
   String? _currentUserId;
-  final GetIncomingRequestsStreamUsecase _getIncomingRequestsStreamUsecase;
+  StreamSubscription? _userDataSubscription;
+  StreamSubscription? _friendRequestsSubscription;
 
   UserDataCubit({required UserRepository userRepository})
-    : // _getUserFromLocalDatabaseUsecase =
-      //       getIt<GetUserFromLocalDatabaseUsecase>(),
-      _getUserFromRealtimeDatabaseUsecase =
+    : _getUserDatabaseReferenceUsecase =
           getIt<GetUserDatabaseReferenceUsecase>(),
       _sendFriendRequestUsecase = getIt<SendFriendRequestUsecase>(),
-      _getIncomingRequestsStreamUsecase =
-          getIt<GetIncomingRequestsStreamUsecase>(),
+      _rejectFriendRequestUsecase = getIt<RejectFriendRequestUsecase>(),
+      _getFriendsDbReferenceUsecase = getIt<GetFriendsDbReferenceUsecase>(),
+      _getUserByIdUsecase = getIt<GetUserByIdUsecase>(),
       super(InitialState()) {
-    _listenToAuthChanges();
-    _loadUserData();
-    _loadIncomingRequests();
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    await _loadUserData();
+    await _loadFriendRequests();
   }
 
   Future<void> _loadUserData() async {
-    // Cancel any existing subscription
-    await _userDataSubscription?.cancel();
-
-    // Only emit loading state if we don't already have user data loaded
-    if (state is! UserDataLoadedState &&
-        state is! IncomingRequestsLoadedState) {
-      emit(LoadingState());
-    }
-
+    emit(LoadingState());
     try {
-      final dbRef = await _getUserFromRealtimeDatabaseUsecase.call();
+      final userDbRef = await _getUserDatabaseReferenceUsecase.call();
 
-      // Store the subscription so we can cancel it later
-      _userDataSubscription = dbRef.onValue.listen(
-        (event) {
-          if (event.snapshot.value != null) {
-            try {
-              final userModel = UserModel.fromJson(
-                Map<String, dynamic>.from(event.snapshot.value as Map),
-              );
+      final snapshot = await userDbRef.get();
+      if (snapshot.value != null) {
+        final user = UserModel.fromJson(
+          Map<String, dynamic>.from(snapshot.value as Map),
+        ).toEntity();
+        _currentUserId = user.id;
+        log("afterr current user id: $_currentUserId");
+        emit(UserDataLoadedState(user: user));
+      }
 
-              // Preserve existing incoming requests data if available
-              final currentState = state;
-              List<Map<String, String>>? existingRequests;
-              if (currentState is UserDataLoadedState) {
-                existingRequests = currentState.incomingRequests;
-              } else if (currentState is IncomingRequestsLoadedState) {
-                existingRequests = currentState.incomingRequests;
-              }
-
-              emit(
-                UserDataLoadedState(
-                  user: userModel.toEntity(),
-                  incomingRequests: existingRequests,
-                ),
-              );
-            } catch (e) {
-              log('Error parsing user data: $e');
-              emit(FailureState(error: 'Failed to load user data'));
-            }
-          } else {
-            log('User data is null');
-            emit(FailureState(error: 'User data not found'));
+      _userDataSubscription = userDbRef.onValue.listen((event) {
+        if (event.snapshot.value != null) {
+          try {
+            final user = UserModel.fromJson(
+              Map<String, dynamic>.from(event.snapshot.value as Map),
+            ).toEntity();
+            log("current user id: $_currentUserId");
+            _currentUserId = user.id;
+            log("after current user id: $_currentUserId");
+            emit(UserDataLoadedState(user: user));
+          } catch (e) {
+            emit(FailureState(error: e.toString()));
           }
-        },
-        onError: (error) {
-          log('Stream error: $error');
-          emit(FailureState(error: 'Failed to load user data'));
-        },
-      );
+        }
+      });
     } catch (e) {
-      log('Error getting database reference: $e');
       emit(FailureState(error: e.toString()));
     }
   }
 
-  /// Listen to Firebase Auth state changes to detect user changes
-  void _listenToAuthChanges() {
-    _authStateSubscription = getIt<FirebaseAuth>().authStateChanges().listen((
-      User? user,
-    ) async {
-      final newUserId = user?.uid;
+  Future<void> _loadFriendRequests() async {
+    log("_loadFriendRequests: current user id: $_currentUserId");
 
-      // If user changed (including sign out or sign in with different user)
-      if (_currentUserId != newUserId) {
-        log(
-          'Auth state changed. Old user: $_currentUserId, New user: $newUserId',
+    try {
+      final friendsDbRef = await _getFriendsDbReferenceUsecase.call();
+      _friendRequestsSubscription = friendsDbRef.onValue.listen((event) {
+        _processFriendRequests(event.snapshot.value);
+      });
+    } catch (e) {
+      log('Error setting up friend requests stream: $e');
+      emit(FailureState(error: 'Failed to load friend requests'));
+    }
+  }
+
+  Future<Map<String, List<FriendEntity>>> _processFriendRequestsData(
+    dynamic data,
+  ) async {
+    Map<String, List<FriendEntity>> result = {
+      "incomingRequests": [],
+      "outgoingRequests": [],
+    };
+
+    if (data == null || _currentUserId == null) {
+      return result;
+    }
+
+    final allFriends = data as Map<dynamic, dynamic>;
+    final List<RequestEntity> incomingRequests = [];
+    final List<RequestEntity> outgoingRequests = [];
+
+    // Separate incoming and outgoing requests
+    allFriends.forEach((key, value) {
+      final Map<String, dynamic> friend = Map<String, dynamic>.from(
+        value as Map,
+      );
+
+      if (friend['status'] == 'pending') {
+        final request = RequestEntity(
+          senderId: friend['senderId'] as String,
+          receiverId: friend['receiverId'] as String,
+          sentAt: friend['sentAt'] as String,
+          status: friend['status'] as String,
         );
-        _currentUserId = newUserId;
 
-        if (newUserId != null) {
-          // User signed in (or changed), reload data
-          _loadUserData();
-          _loadIncomingRequests();
-        } else {
-          // User signed out, reset state
-          await _incomingRequestsSubscription?.cancel();
-          emit(InitialState());
+        if (friend['senderId'] == _currentUserId) {
+          incomingRequests.add(request);
+        } else if (friend['receiverId'] == _currentUserId) {
+          outgoingRequests.add(request);
         }
       }
     });
+
+    // Process incoming requests
+    final List<FriendEntity> incomingRequestsData = [];
+    for (final request in incomingRequests) {
+      try {
+        final friendData = await _getUserByIdUsecase.call(request.senderId);
+        if (friendData != null) {
+          incomingRequestsData.add(
+            FriendEntity(
+              id: request.senderId,
+              name: friendData.name,
+              photoUrl: friendData.photoUrl,
+            ),
+          );
+        }
+      } catch (e) {
+        log('Error fetching friend data for ${request.senderId}: $e');
+      }
+    }
+
+    // Process outgoing requests
+    final List<FriendEntity> outgoingRequestsData = [];
+    for (final request in outgoingRequests) {
+      try {
+        final friendData = await _getUserByIdUsecase.call(request.receiverId);
+        if (friendData != null) {
+          outgoingRequestsData.add(
+            FriendEntity(
+              id: request.receiverId,
+              name: friendData.name,
+              photoUrl: friendData.photoUrl,
+            ),
+          );
+        }
+      } catch (e) {
+        log('Error fetching friend data for ${request.receiverId}: $e');
+      }
+    }
+
+    result["incomingRequests"] = incomingRequestsData;
+    result["outgoingRequests"] = outgoingRequestsData;
+
+    return result;
   }
 
-  // Refreshes user data (useful after sign in with different user)
-  Future<void> refreshUserData() async {
-    await _loadUserData();
+  Future<void> _processFriendRequests(dynamic data) async {
+    try {
+      final requestsData = await _processFriendRequestsData(data);
+
+      final currentState = state;
+      if (currentState is UserDataLoadedState) {
+        log("incomingRequests: ${requestsData["incomingRequests"]}");
+        log("outgoingRequests: ${requestsData["outgoingRequests"]}");
+        emit(
+          currentState.copyWith(
+            incomingRequests: requestsData["incomingRequests"],
+            outgoingRequests: requestsData["outgoingRequests"],
+            clearMessage: true,
+            clearError: true,
+          ),
+        );
+      }
+    } catch (e) {
+      log('Error processing friend requests: $e');
+      emit(FailureState(error: 'Failed to load friend requests'));
+    }
   }
 
   Future<void> addFriend(String id) async {
     final currentState = state;
+    if (currentState is! UserDataLoadedState) {
+      log('Cannot add friend: User data not loaded');
+      return;
+    }
 
     try {
       await _sendFriendRequestUsecase.call(id);
-
-      // Update current state with success message
-      if (currentState is UserDataLoadedState) {
-        emit(
-          currentState.copyWith(message: "Friend request sent successfully"),
-        );
-
-        // Clear the message after a short delay
-        Timer(Duration(seconds: 2), () {
-          if (state is UserDataLoadedState) {
-            emit((state as UserDataLoadedState).clearMessage());
-          }
-        });
-      } else {
-        emit(SuccessState(message: "Friend request sent successfully"));
-      }
+      emit(currentState.copyWith(message: "Friend request sent successfully"));
     } catch (e) {
       String errorMessage;
       if (e is FirebaseAuthException) {
@@ -154,74 +213,72 @@ class UserDataCubit extends Cubit<UserDataState> {
       } else {
         errorMessage = "Something went wrong";
       }
-
-      // Update current state with error message
-      if (currentState is UserDataLoadedState) {
-        emit(currentState.copyWith(error: errorMessage));
-
-        // Clear the error message after a short delay
-        Timer(Duration(seconds: 3), () {
-          if (state is UserDataLoadedState) {
-            emit((state as UserDataLoadedState).clearMessage());
-          }
-        });
-      } else {
-        emit(FailureState(error: errorMessage));
-      }
+      emit(currentState.copyWith(error: errorMessage));
     }
   }
 
-  /// Load incoming requests with real-time updates using _loadData pattern
-  Future<void> _loadIncomingRequests() async {
-    // Cancel any existing incoming requests subscription
-    await _incomingRequestsSubscription?.cancel();
+  Future<void> rejectFriendRequest(String id) async {
+    final currentState = state;
+    if (currentState is! UserDataLoadedState) {
+      log('Cannot reject friend request: User data not loaded');
+      return;
+    }
 
     try {
-      // Store the subscription so we can cancel it later
-      _incomingRequestsSubscription = _getIncomingRequestsStreamUsecase.call().listen(
-        (incomingRequests) {
-          try {
-            // Update the current state with incoming requests data
-            final currentState = state;
-            if (currentState is UserDataLoadedState) {
-              // Update existing UserDataLoadedState with incoming requests
-              emit(currentState.copyWith(incomingRequests: incomingRequests));
-            } else {
-              // Emit as IncomingRequestsLoadedState if user data not loaded yet
-              emit(
-                IncomingRequestsLoadedState(incomingRequests: incomingRequests),
-              );
-            }
-            log(
-              'Incoming requests updated: ${incomingRequests.length} requests',
-            );
-          } catch (e) {
-            log('Error processing incoming requests: $e');
-            emit(FailureState(error: 'Failed to load incoming requests'));
-          }
-        },
-        onError: (error) {
-          log('Incoming requests stream error: $error');
-          emit(FailureState(error: 'Failed to load incoming requests'));
-        },
+      await _rejectFriendRequestUsecase.call(id);
+      emit(
+        currentState.copyWith(message: "Friend request rejected successfully"),
       );
+      _loadFriendRequests();
     } catch (e) {
-      log('Error setting up incoming requests stream: $e');
-      emit(FailureState(error: e.toString()));
+      String errorMessage;
+      if (e is FirebaseAuthException) {
+        log("Firebase Auth Exception - Code: ${e.code}, Message: ${e.message}");
+        errorMessage = e.message ?? "Something went wrong";
+      } else {
+        errorMessage = "Something went wrong";
+      }
+      emit(currentState.copyWith(error: errorMessage));
     }
-  }
-
-  /// Public method to start listening to incoming requests
-  void getIncomingRequests() {
-    emit(LoadingState());
-    _loadIncomingRequests();
   }
 
   @override
   Future<void> close() async {
-    await _userDataSubscription?.cancel();
-    await _authStateSubscription?.cancel();
-    await _incomingRequestsSubscription?.cancel();
-    return super.close();
+    try {
+      log('UserDataCubit: Starting complete cleanup...');
+
+      // Clear all internal data
+      _currentUserId = null;
+
+      // Cancel all subscriptions safely
+      await _userDataSubscription?.cancel();
+      await _friendRequestsSubscription?.cancel();
+
+      // Clear subscription references
+      _userDataSubscription = null;
+      _friendRequestsSubscription = null;
+
+      log(
+        "Subscriptions cancelled - UserData: ${_userDataSubscription == null}",
+      );
+      log(
+        "Subscriptions cancelled - FriendRequests: ${_friendRequestsSubscription == null}",
+      );
+
+      // Clear all states by emitting initial state
+      emit(InitialState());
+
+      log('UserDataCubit: Complete cleanup finished successfully');
+    } catch (e) {
+      log('UserDataCubit: Error during cleanup: $e');
+      // Force cleanup even if there's an error
+      _currentUserId = null;
+      _userDataSubscription = null;
+      _friendRequestsSubscription = null;
+      emit(InitialState());
+    }
+
+    // Call super.close() after cleanup
+    await super.close();
   }
 }

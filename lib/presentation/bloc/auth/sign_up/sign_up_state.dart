@@ -11,3 +11,27 @@ class AuthFailureState extends SignUpState {
 
   AuthFailureState({required this.error});
 }
+
+class AuthDisplayNameValidationState extends SignUpState {
+  final String? error;
+
+  AuthDisplayNameValidationState({required this.error});
+}
+
+class AuthEmailValidationState extends SignUpState {
+  final String? error;
+
+  AuthEmailValidationState({required this.error});
+}
+
+class AuthPasswordValidationState extends SignUpState {
+  final String? error;
+
+  AuthPasswordValidationState({required this.error});
+}
+
+class AuthPasswordConfirmValidationState extends SignUpState {
+  final String? error;
+
+  AuthPasswordConfirmValidationState({required this.error});
+}

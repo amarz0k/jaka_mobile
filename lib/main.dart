@@ -2,6 +2,7 @@ import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
+import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/presentation/bloc/auth/google_sign_in/google_sign_in_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/login/login_bloc.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_bloc.dart';
@@ -49,7 +50,9 @@ class MainApp extends StatelessWidget {
           create: (_) => SignOutBloc(authRepository: getIt<AuthRepository>()),
         ),
 
-        BlocProvider<UserDataCubit>(create: (_) => getIt<UserDataCubit>()),
+        BlocProvider<UserDataCubit>(
+          create: (_) => UserDataCubit(userRepository: getIt<UserRepository>()),
+        ),
 
         BlocProvider<ConnectivityCubit>(create: (_) => ConnectivityCubit()),
 

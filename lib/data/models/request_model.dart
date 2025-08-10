@@ -6,7 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'request_model.g.dart';
 
 @JsonSerializable()
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class RequestModel with EntityConvertible<RequestModel, RequestEntity> {
   @HiveField(0)
   @JsonKey(name: 'senderId')

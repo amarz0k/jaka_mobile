@@ -25,94 +25,6 @@ class SignUpPage extends StatelessWidget {
     TextEditingController _displayNameController = TextEditingController();
     final _formKey = GlobalKey<FormState>();
 
-    String? _displayNameValidator(String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return 'Display name cannot be empty';
-      }
-      if (value.length < 3) {
-        return 'Display name must be at least 3 characters';
-      }
-      if (value.length > 20) {
-        return 'Display name must be at most 20 characters';
-      }
-      final displayNameRegex = RegExp(r'^[a-zA-Z0-9]+$');
-      if (!displayNameRegex.hasMatch(value)) {
-        return 'Display name can only contain letters and numbers';
-      }
-      return null;
-    }
-
-    String? _emailValidator(String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return 'Email cannot be empty';
-      }
-      final emailRegex = RegExp(
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
-      );
-      if (!emailRegex.hasMatch(value)) {
-        return 'Please enter a valid email address';
-      }
-      return null;
-    }
-
-    String? _passwordValidator(String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return 'Password cannot be empty';
-      }
-      if (value.length < 8) {
-        return 'Password must be at least 8 characters';
-      }
-      if (value.length > 32) {
-        return 'Password must be at most 32 characters';
-      }
-      final upperCaseRegex = RegExp(r'[A-Z]');
-      final lowerCaseRegex = RegExp(r'[a-z]');
-      final digitRegex = RegExp(r'[0-9]');
-      final specialCharRegex = RegExp(r'[!@#\$%\^&\*]');
-      if (!upperCaseRegex.hasMatch(value)) {
-        return 'Password must contain at least one uppercase letter';
-      }
-      if (!lowerCaseRegex.hasMatch(value)) {
-        return 'Password must contain at least one lowercase letter';
-      }
-      if (!digitRegex.hasMatch(value)) {
-        return 'Password must contain at least one number';
-      }
-      if (!specialCharRegex.hasMatch(value)) {
-        return 'Password must contain at least one special character';
-      }
-      return null;
-    }
-
-    String? _passwordConfirmValidator(String? value) {
-      if (value != _passwordController.text) {
-        return 'Passwords do not match';
-      }
-      return null;
-    }
-
-    String? _validateDisplayName(String? value) {
-      return null;
-    }
-
-    String? _validatePassword(String? value) {
-      return null;
-    }
-
-    String? _validateEmail(String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return 'Email cannot be empty';
-      }
-      return null;
-    }
-
-    String? _validatePasswordConfirm(String? value) {
-      if (value != _passwordController.text) {
-        return 'Passwords do not match';
-      }
-      return null;
-    }
-
     return Scaffold(
       body: Stack(
         children: [
@@ -123,7 +35,7 @@ class SignUpPage extends StatelessWidget {
             child: Image.asset(AppImages.loginBg),
           ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.2,
+            top: MediaQuery.of(context).size.height * 0.15,
             left: 0,
             right: 0,
             bottom: 0, // Changed from height to bottom
@@ -184,24 +96,18 @@ class SignUpPage extends StatelessWidget {
                               labelText: 'Display name',
                               hintText: 'Enter your display name',
                               controller: _displayNameController,
-                              validator: _displayNameValidator,
-                              onChanged: _validateDisplayName,
                             ),
                             const SizedBox(height: 40),
                             customFormField(
                               labelText: 'Email',
                               hintText: 'Enter your email address',
                               controller: _emailController,
-                              validator: _emailValidator,
-                              onChanged: _validateEmail,
                             ),
                             const SizedBox(height: 40),
                             customFormField(
                               labelText: 'Password',
                               hintText: 'Enter your password',
                               controller: _passwordController,
-                              validator: _passwordValidator,
-                              onChanged: _validatePassword,
                               obscureText: true,
                             ),
                             const SizedBox(height: 40),
@@ -209,8 +115,6 @@ class SignUpPage extends StatelessWidget {
                               labelText: 'Confirm Password',
                               hintText: 'Confirm your password',
                               controller: _confirmPasswordController,
-                              validator: _passwordConfirmValidator,
-                              onChanged: _validatePasswordConfirm,
                               obscureText: true,
                             ),
                           ],

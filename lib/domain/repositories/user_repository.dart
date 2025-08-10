@@ -11,6 +11,8 @@ abstract class UserRepository {
 
   Future<DatabaseReference> getUserDatabaseReference();
 
+  Future<DatabaseReference> getFriendsDatabaseReference();
+
   Future<UserEntity> getUserFromLocalStorage();
 
   Future<void> updateUserNotifications(bool value);
@@ -20,4 +22,10 @@ abstract class UserRepository {
   Future<void> sendFriendRequest(String id);
 
   Stream<List<Map<String, String>>> getIncomingRequestsStream();
+
+  Stream<List<Map<String, String>>> getOutgoingRequestsStream();
+
+  Future<void> rejectFriendRequest(String id);
+
+  Future<UserModel?> getUserById(String id);
 }

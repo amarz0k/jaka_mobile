@@ -5,10 +5,14 @@ import 'package:chat_app/data/repositories/auth_repository_impl.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
+import 'package:chat_app/domain/usecases/get_friends_db_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/get_incoming_requests_stream_usecase.dart';
+import 'package:chat_app/domain/usecases/get_outgoing_requests_stream_usecase.dart';
+import 'package:chat_app/domain/usecases/get_user_by_id_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_from_local_database_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';
+import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_local_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
@@ -104,11 +108,23 @@ void setUpServiceLocator() {
     () => GetIncomingRequestsStreamUsecase(getIt<UserRepository>()),
   );
 
-  // others
-  getIt.registerFactory<UserDataCubit>(
-    () => UserDataCubit(userRepository: getIt<UserRepository>()),
+  getIt.registerLazySingleton<GetOutgoingRequestsStreamUsecase>(
+    () => GetOutgoingRequestsStreamUsecase(getIt<UserRepository>()),
   );
 
+  getIt.registerLazySingleton<RejectFriendRequestUsecase>(
+    () => RejectFriendRequestUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetFriendsDbReferenceUsecase>(
+    () => GetFriendsDbReferenceUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetUserByIdUsecase>(
+    () => GetUserByIdUsecase(getIt<UserRepository>()),
+  );
+
+  // others
   getIt.registerFactory<SettingsCubit>(
     () => SettingsCubit(userRepository: getIt<UserRepository>()),
   );

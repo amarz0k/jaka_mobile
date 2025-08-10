@@ -11,3 +11,9 @@ class AuthSignUpWithEmailAndPasswordEvent extends SignUpEvent {
     required this.name,
   });
 }
+
+class AuthValidateDisplayNameEvent extends SignUpEvent {
+  final String displayName;
+
+  AuthValidateDisplayNameEvent({required this.displayName});
+}

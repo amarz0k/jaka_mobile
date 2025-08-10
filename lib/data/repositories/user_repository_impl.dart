@@ -1,9 +1,6 @@
-import 'dart:developer';
-
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/data/models/user_model.dart';
-import 'package:chat_app/domain/entities/request_entity.dart';
 import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';

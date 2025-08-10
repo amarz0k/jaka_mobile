@@ -12,9 +12,9 @@ FriendModel _$FriendModelFromJson(Map<String, dynamic> json) => FriendModel(
       photoUrl: json['photoUrl'] as String?,
     );
 
-// Map<String, dynamic> _$FriendModelToJson(FriendModel instance) =>
-//     <String, dynamic>{
-//       'id': instance.id,
-//       'name': instance.name,
-//       'photoUrl': instance.photoUrl,
-//     };
+Map<String, dynamic> _$FriendModelToJson(FriendModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'photoUrl': instance.photoUrl,
+    };

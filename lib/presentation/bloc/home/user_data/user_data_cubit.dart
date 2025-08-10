@@ -133,16 +133,27 @@ class UserDataCubit extends Cubit<UserDataState> {
       }
 
       if (friend['status'] == 'accepted') {
-        final request = RequestEntity(
-          senderId: friend['senderId'] as String,
-          receiverId: friend['receiverId'] as String,
-          sentAt: friend['sentAt'] as String,
-          status: friend['status'] as String,
-        );
+
         if (friend['acceptedAt'] != null &&
                 friend['acceptedAt'] != "" &&
-                friend['receiverId'] == _currentUserId ||
+                friend['receiverId'] == _currentUserId ) {
+          final request = RequestEntity(
+            senderId: friend['senderId'] as String,
+            receiverId: friend['receiverId'] as String,
+            sentAt: friend['sentAt'] as String,
+            status: friend['status'] as String,
+          );
+
+          acceptedRequests.add(request);
+        } else if (friend['acceptedAt'] != null &&
+            friend['acceptedAt'] != "" &&
             friend['senderId'] == _currentUserId) {
+                      final request = RequestEntity(
+            senderId: friend['receiverId'] as String,
+            receiverId: friend['senderId'] as String,
+            sentAt: friend['sentAt'] as String,
+            status: friend['status'] as String,
+          );
           acceptedRequests.add(request);
         }
       }

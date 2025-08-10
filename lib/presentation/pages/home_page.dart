@@ -14,7 +14,6 @@ import 'package:chat_app/presentation/widgets/friend_request_widget.dart';
 import 'package:chat_app/presentation/widgets/friend_widget.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
-import 'package:chat_app/utils/friends_data_sample.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toastification/toastification.dart';
@@ -323,11 +322,19 @@ class HomePage extends StatelessWidget {
                                             request.photoUrl ??
                                             'https://via.placeholder.com/150',
                                         name: request.name,
-                                        lastMessage:
-                                            dataSample[index]["lastMessage"],
-                                        time: dataSample[index]["time"],
+                                        lastMessage: null,
+                                        time: null,
                                         nameFontSize: 20,
                                         lastMessageFontSize: 16,
+                                        onTap: () {
+                                          context.router.push(
+                                            ConversationRoute(
+                                              friendId: request.id,
+                                              friendName: request.name,
+                                              friendPhotoUrl: request.photoUrl,
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
                                   );
@@ -354,12 +361,8 @@ class HomePage extends StatelessWidget {
                                 // Default case - show empty state
                                 return Padding(
                                   padding: const EdgeInsets.all(20.0),
-                                  child: Text(
-                                    "You have no friends",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey.shade600,
-                                    ),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
                                   ),
                                 );
                               },

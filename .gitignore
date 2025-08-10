@@ -49,3 +49,5 @@ app.*.map.json
 push.bat
 
 strct.bat
+
+br.bat

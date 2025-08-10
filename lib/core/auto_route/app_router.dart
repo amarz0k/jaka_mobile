@@ -1,3 +1,5 @@
+import 'package:chat_app/presentation/pages/friend_details_page.dart';
+import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/core/auto_route/auth_gaurd.dart';
 import 'package:chat_app/core/di/service_locator.dart';
@@ -30,12 +32,18 @@ class AppRouter extends _$AppRouter {
     ),
     AutoRoute(
       page: ConversationRoute.page,
-      path: '/conversation',
+      path: '/conversation/:friendId',
       guards: [getIt<AuthGuard>()],
     ),
     AutoRoute(
       page: UserProfileRoute.page, // Change from UserProfileRoute.page
       path: '/user-profile',
+      guards: [getIt<AuthGuard>()],
+    ),
+
+    AutoRoute(
+      page: FriendDetailsRoute.page,
+      path: '/friend-details/:friendId',
       guards: [getIt<AuthGuard>()],
     ),
   ];

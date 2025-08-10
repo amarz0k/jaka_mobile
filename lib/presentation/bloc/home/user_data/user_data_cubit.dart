@@ -6,6 +6,7 @@ import 'package:chat_app/data/models/user_model.dart';
 import 'package:chat_app/domain/entities/friend_entity.dart';
 import 'package:chat_app/domain/entities/request_entity.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
+import 'package:chat_app/domain/usecases/accept_friend_request_usecase.dart';
 import 'package:chat_app/domain/usecases/get_friends_db_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_by_id_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dart';
@@ -21,6 +22,7 @@ class UserDataCubit extends Cubit<UserDataState> {
   final SendFriendRequestUsecase _sendFriendRequestUsecase;
   final RejectFriendRequestUsecase _rejectFriendRequestUsecase;
   final GetUserByIdUsecase _getUserByIdUsecase;
+  final AcceptFriendRequestUsecase _acceptFriendRequestUsecase;
   String? _currentUserId;
   StreamSubscription? _userDataSubscription;
   StreamSubscription? _friendRequestsSubscription;
@@ -32,6 +34,7 @@ class UserDataCubit extends Cubit<UserDataState> {
       _rejectFriendRequestUsecase = getIt<RejectFriendRequestUsecase>(),
       _getFriendsDbReferenceUsecase = getIt<GetFriendsDbReferenceUsecase>(),
       _getUserByIdUsecase = getIt<GetUserByIdUsecase>(),
+      _acceptFriendRequestUsecase = getIt<AcceptFriendRequestUsecase>(),
       super(InitialState()) {
     initialize();
   }
@@ -96,6 +99,7 @@ class UserDataCubit extends Cubit<UserDataState> {
     Map<String, List<FriendEntity>> result = {
       "incomingRequests": [],
       "outgoingRequests": [],
+      "friends": [],
     };
 
     if (data == null || _currentUserId == null) {
@@ -105,6 +109,7 @@ class UserDataCubit extends Cubit<UserDataState> {
     final allFriends = data as Map<dynamic, dynamic>;
     final List<RequestEntity> incomingRequests = [];
     final List<RequestEntity> outgoingRequests = [];
+    final List<RequestEntity> acceptedRequests = [];
 
     // Separate incoming and outgoing requests
     allFriends.forEach((key, value) {
@@ -120,10 +125,25 @@ class UserDataCubit extends Cubit<UserDataState> {
           status: friend['status'] as String,
         );
 
-        if (friend['senderId'] == _currentUserId) {
+        if (friend['receiverId'] == _currentUserId) {
           incomingRequests.add(request);
-        } else if (friend['receiverId'] == _currentUserId) {
+        } else if (friend['senderId'] == _currentUserId) {
           outgoingRequests.add(request);
+        }
+      }
+
+      if (friend['status'] == 'accepted') {
+        final request = RequestEntity(
+          senderId: friend['senderId'] as String,
+          receiverId: friend['receiverId'] as String,
+          sentAt: friend['sentAt'] as String,
+          status: friend['status'] as String,
+        );
+        if (friend['acceptedAt'] != null &&
+                friend['acceptedAt'] != "" &&
+                friend['receiverId'] == _currentUserId ||
+            friend['senderId'] == _currentUserId) {
+          acceptedRequests.add(request);
         }
       }
     });
@@ -166,8 +186,27 @@ class UserDataCubit extends Cubit<UserDataState> {
       }
     }
 
+    final List<FriendEntity> friendsData = [];
+    for (final request in acceptedRequests) {
+      try {
+        final friendData = await _getUserByIdUsecase.call(request.senderId);
+        if (friendData != null) {
+          friendsData.add(
+            FriendEntity(
+              id: request.senderId,
+              name: friendData.name,
+              photoUrl: friendData.photoUrl,
+            ),
+          );
+        }
+      } catch (e) {
+        log('Error fetching friend data for ${request.senderId}: $e');
+      }
+    }
+
     result["incomingRequests"] = incomingRequestsData;
     result["outgoingRequests"] = outgoingRequestsData;
+    result["friends"] = friendsData;
 
     return result;
   }
@@ -180,10 +219,12 @@ class UserDataCubit extends Cubit<UserDataState> {
       if (currentState is UserDataLoadedState) {
         log("incomingRequests: ${requestsData["incomingRequests"]}");
         log("outgoingRequests: ${requestsData["outgoingRequests"]}");
+        log("friends: ${requestsData["friends"]}");
         emit(
           currentState.copyWith(
             incomingRequests: requestsData["incomingRequests"],
             outgoingRequests: requestsData["outgoingRequests"],
+            friends: requestsData["friends"],
             clearMessage: true,
             clearError: true,
           ),
@@ -228,6 +269,31 @@ class UserDataCubit extends Cubit<UserDataState> {
       await _rejectFriendRequestUsecase.call(id);
       emit(
         currentState.copyWith(message: "Friend request rejected successfully"),
+      );
+      _loadFriendRequests();
+    } catch (e) {
+      String errorMessage;
+      if (e is FirebaseAuthException) {
+        log("Firebase Auth Exception - Code: ${e.code}, Message: ${e.message}");
+        errorMessage = e.message ?? "Something went wrong";
+      } else {
+        errorMessage = "Something went wrong";
+      }
+      emit(currentState.copyWith(error: errorMessage));
+    }
+  }
+
+  Future<void> acceptFriendRequest(String id) async {
+    final currentState = state;
+    if (currentState is! UserDataLoadedState) {
+      log('Cannot accept friend request: User data not loaded');
+      return;
+    }
+
+    try {
+      await _acceptFriendRequestUsecase.call(id);
+      emit(
+        currentState.copyWith(message: "Friend request accepted successfully"),
       );
       _loadFriendRequests();
     } catch (e) {

@@ -130,6 +130,19 @@ class UserRepositoryImpl implements UserRepository {
     }
   }
 
+  @override
+  Future<DatabaseReference> getFriendsDatabaseReference() async {
+    try {
+      final friendsDbRef = getIt<FirebaseDatabase>().ref().child('friends');
+      return friendsDbRef;
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'GET_FRIEND_DB_REFERENCE_FAILED',
+        message: 'Failed to get friend database reference: ${e.toString()}',
+      );
+    }
+  }
+
   String _createSafeFirebasePath(String input) {
     return input
         .replaceAll('#', '_')
@@ -185,19 +198,12 @@ class UserRepositoryImpl implements UserRepository {
       );
     }
 
-    if (id == currentUser.id) {
-      throw FirebaseAuthException(
-        code: 'CURRENT_USER',
-        message: 'Can\'t send friend request to yourself',
-      );
-    }
-
     await dbRef.set({
       'senderId': currentUser.id,
       'receiverId': friend.id,
       'status': 'pending',
       'sentAt': DateTime.now().toIso8601String(),
-      'acceptedAt': null,
+      'acceptedAt': "",
     });
   }
 
@@ -219,148 +225,19 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Stream<List<Map<String, String>>> getIncomingRequestsStream() async* {
-    try {
-      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
-          .call();
-      final dbRef = getIt<FirebaseDatabase>().ref().child('friends');
-
-      await for (final event in dbRef.onValue) {
-        if (!event.snapshot.exists) {
-          yield [];
-          continue;
-        }
-
-        final List<RequestEntity> incomingRequests = [];
-        final Map<dynamic, dynamic> allRequests =
-            event.snapshot.value as Map<dynamic, dynamic>;
-
-        allRequests.forEach((requestId, requestData) {
-          final Map<String, dynamic> request = Map<String, dynamic>.from(
-            requestData as Map,
-          );
-
-          // Check if this request is for the current user (they are the receiver)
-          if (request['receiverId'] == currentUser.id &&
-              request['status'] == 'pending') {
-            incomingRequests.add(
-              RequestEntity(
-                senderId: request['senderId'] as String,
-                receiverId: request['receiverId'] as String,
-                sentAt: request['sentAt'] as String,
-                status: request['status'] as String,
-              ),
-            );
-          }
-        });
-
-        // Sort by sentAt timestamp (most recent first)
-        incomingRequests.sort((a, b) => b.sentAt.compareTo(a.sentAt));
-
-        List<Map<String, String>> incomingRequestsData = [];
-
-        // Get friend data for each request
-        for (final request in incomingRequests) {
-          try {
-            final friend = await getUserById(request.senderId);
-            if (friend != null) {
-              incomingRequestsData.add({
-                'friendPhotoUrl': friend.photoUrl ?? '',
-                'friendName': friend.name,
-                'senderId': request.senderId,
-                'sentAt': request.sentAt,
-              });
-            }
-          } catch (e) {
-            // Log error but continue with other requests
-            print('Error fetching friend data for ${request.senderId}: $e');
-          }
-        }
-
-        yield incomingRequestsData;
-      }
-    } catch (e) {
-      throw FirebaseAuthException(
-        code: 'GET_REQUESTS_STREAM_FAILED',
-        message: 'Failed to get incoming requests stream: ${e.toString()}',
-      );
-    }
-  }
-
-  @override
-  Stream<List<Map<String, String>>> getOutgoingRequestsStream() async* {
-    try {
-      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
-          .call();
-      final dbRef = getIt<FirebaseDatabase>().ref().child('friends');
-
-      await for (final event in dbRef.onValue) {
-        if (!event.snapshot.exists) {
-          yield [];
-          continue;
-        }
-
-        final List<RequestEntity> outgoingRequests = [];
-        final Map<dynamic, dynamic> allRequests =
-            event.snapshot.value as Map<dynamic, dynamic>;
-
-        allRequests.forEach((requestId, requestData) {
-          final Map<String, dynamic> request = Map<String, dynamic>.from(
-            requestData as Map,
-          );
-
-          // Check if this request is from the current user (they are the sender)
-          if (request['senderId'] == currentUser.id &&
-              request['status'] == 'pending') {
-            outgoingRequests.add(
-              RequestEntity(
-                senderId: request['senderId'] as String,
-                receiverId: request['receiverId'] as String,
-                sentAt: request['sentAt'] as String,
-                status: request['status'] as String,
-              ),
-            );
-          }
-        });
-
-        // Sort by sentAt timestamp (most recent first)
-        outgoingRequests.sort((a, b) => b.sentAt.compareTo(a.sentAt));
-
-        List<Map<String, String>> outgoingRequestsData = [];
-
-        // Get friend data for each request
-        for (final request in outgoingRequests) {
-          try {
-            final friend = await getUserById(request.receiverId);
-            if (friend != null) {
-              outgoingRequestsData.add({
-                'friendPhotoUrl': friend.photoUrl ?? '',
-                'friendName': friend.name,
-                'receiverId': request.receiverId,
-                'sentAt': request.sentAt,
-              });
-            }
-          } catch (e) {
-            // Log error but continue with other requests
-            print('Error fetching friend data for ${request.receiverId}: $e');
-          }
-        }
-
-        yield outgoingRequestsData;
-      }
-    } catch (e) {
-      throw FirebaseAuthException(
-        code: 'GET_OUTGOING_REQUESTS_STREAM_FAILED',
-        message: 'Failed to get outgoing requests stream: ${e.toString()}',
-      );
-    }
-  }
-
-  @override
   Future<void> rejectFriendRequest(String friendId) async {
     try {
       final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
           .call();
+
+      final isRequestExists = await requestExists(currentUser.id, friendId);
+
+      if (!isRequestExists) {
+        throw FirebaseAuthException(
+          code: 'REQUEST_NOT_FOUND',
+          message: 'Request not found',
+        );
+      }
 
       final path1 =
           'friends/${_createSafeFirebasePath(friendId)}_${_createSafeFirebasePath(currentUser.id)}';
@@ -380,14 +257,32 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<DatabaseReference> getFriendsDatabaseReference() async {
+  Future<void> acceptFriendRequest(String friendId) async {
     try {
-      final friendsDbRef = getIt<FirebaseDatabase>().ref().child('friends');
-      return friendsDbRef;
+      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
+          .call();
+
+      final isRequestExists = await requestExists(currentUser.id, friendId);
+
+      if (!isRequestExists) {
+        throw FirebaseAuthException(
+          code: 'REQUEST_NOT_FOUND',
+          message: 'Request not found',
+        );
+      }
+
+      final path1 =
+          'friends/${_createSafeFirebasePath(friendId)}_${_createSafeFirebasePath(currentUser.id)}';
+
+      await getIt<FirebaseDatabase>().ref().child(path1).update({
+        'status': 'accepted',
+        'acceptedAt': DateTime.now().toIso8601String(),
+      });
+
     } catch (e) {
       throw FirebaseAuthException(
-        code: 'GET_FRIEND_DB_REFERENCE_FAILED',
-        message: 'Failed to get friend database reference: ${e.toString()}',
+        code: 'ACCEPT_FRIEND_REQUEST_FAILED',
+        message: 'Failed to accept friend request: ${e.toString()}',
       );
     }
   }

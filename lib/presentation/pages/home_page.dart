@@ -285,18 +285,82 @@ class HomePage extends StatelessWidget {
                       child: TabBarView(
                         children: [
                           SizedBox(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: 10,
-                              itemBuilder: (context, index) {
-                                return FriendWidget(
-                                  logo: dataSample[index]["logo"],
-                                  name: dataSample[index]["name"],
-                                  lastMessage: dataSample[index]["lastMessage"],
-                                  time: dataSample[index]["time"],
-                                  nameFontSize: 20,
-                                  lastMessageFontSize: 16,
+                            child: BlocBuilder<UserDataCubit, UserDataState>(
+                              builder: (context, requestsState) {
+                                List<FriendEntity>? friends;
+
+                                // Extract incoming requests from different state types
+                                if (requestsState is UserDataLoadedState) {
+                                  friends = requestsState.friends;
+                                }
+                                log("friends homepage: $friends");
+
+                                if (friends != null) {
+                                  if (friends.isEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Center(
+                                        child: Text(
+                                          "You have no friends",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: friends.length,
+                                    itemBuilder: (context, index) {
+                                      final request = friends![index];
+                                      return FriendWidget(
+                                        logo:
+                                            request.photoUrl ??
+                                            'https://via.placeholder.com/150',
+                                        name: request.name,
+                                        lastMessage:
+                                            dataSample[index]["lastMessage"],
+                                        time: dataSample[index]["time"],
+                                        nameFontSize: 20,
+                                        lastMessageFontSize: 16,
+                                      );
+                                    },
+                                  );
+                                } else if (requestsState is LoadingState) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+                                } else if (requestsState is FailureState) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Text(
+                                      "Failed to load friends",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                // Default case - show empty state
+                                return Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Text(
+                                    "You have no friends",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
                                 );
                               },
                             ),
@@ -358,13 +422,11 @@ class HomePage extends StatelessWidget {
                                             name: request.name,
                                             isIncoming: true,
                                             onAccept: () {
-                                              // TODO: Implement accept friend request
-                                              showToastification(
-                                                context,
-                                                "Friend request accepted",
-                                                Colors.green,
-                                                ToastificationType.success,
-                                              );
+                                              context
+                                                  .read<UserDataCubit>()
+                                                  .acceptFriendRequest(
+                                                    request.id,
+                                                  );
                                             },
                                             onReject: () {
                                               context

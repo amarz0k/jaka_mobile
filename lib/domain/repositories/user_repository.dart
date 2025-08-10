@@ -21,9 +21,7 @@ abstract class UserRepository {
 
   Future<void> sendFriendRequest(String id);
 
-  Stream<List<Map<String, String>>> getIncomingRequestsStream();
-
-  Stream<List<Map<String, String>>> getOutgoingRequestsStream();
+  Future<void> acceptFriendRequest(String id);
 
   Future<void> rejectFriendRequest(String id);
 

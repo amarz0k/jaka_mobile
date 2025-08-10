@@ -11,6 +11,7 @@ class UserDataLoadedState extends UserDataState {
   final UserEntity user;
   final List<FriendEntity>? incomingRequests;
   final List<FriendEntity>? outgoingRequests;
+  final List<FriendEntity>? friends;
   final String? message; // For success messages
   final String? error; // For error messages
 
@@ -18,6 +19,7 @@ class UserDataLoadedState extends UserDataState {
     required this.user,
     this.incomingRequests,
     this.outgoingRequests,
+    this.friends,
     this.message,
     this.error,
   });
@@ -26,6 +28,7 @@ class UserDataLoadedState extends UserDataState {
     UserEntity? user,
     List<FriendEntity>? incomingRequests,
     List<FriendEntity>? outgoingRequests,
+    List<FriendEntity>? friends,
     String? message,
     String? error,
     bool clearMessage = false,
@@ -35,6 +38,7 @@ class UserDataLoadedState extends UserDataState {
       user: user ?? this.user,
       incomingRequests: incomingRequests ?? this.incomingRequests,
       outgoingRequests: outgoingRequests ?? this.outgoingRequests,
+      friends: friends ?? this.friends,
       message: clearMessage ? null : (message ?? this.message),
       error: clearError ? null : (error ?? this.error),
     );
@@ -43,12 +47,6 @@ class UserDataLoadedState extends UserDataState {
   UserDataLoadedState clearMessage() {
     return copyWith(clearMessage: true, clearError: true);
   }
-}
-
-class IncomingRequestsLoadedState extends UserDataState {
-  final List<FriendEntity> incomingRequests;
-
-  IncomingRequestsLoadedState({required this.incomingRequests});
 }
 
 class SuccessState extends UserDataState {

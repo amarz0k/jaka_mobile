@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 class FriendWidget extends StatelessWidget {
   final String logo;
   final String name;
-  final String lastMessage;
-  final String time;
+  final String? lastMessage;
+  final String? time;
 
   final double nameFontSize;
   final double lastMessageFontSize;
@@ -56,7 +56,7 @@ class FriendWidget extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            time,
+                            time ?? '',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey.shade500,
@@ -65,9 +65,11 @@ class FriendWidget extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        lastMessage.length > 30
-                            ? '${lastMessage.substring(0, 30)}...'
-                            : lastMessage,
+                        lastMessage == null
+                            ? ''
+                            : lastMessage!.length > 30
+                            ? '${lastMessage!.substring(0, 30)}...'
+                            : lastMessage!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

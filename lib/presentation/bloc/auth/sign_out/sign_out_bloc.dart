@@ -5,7 +5,6 @@ import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_event.dart';
 import 'package:chat_app/presentation/bloc/auth/sign_out/sign_out_state.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignOutBloc extends Bloc<SignOutEvent, SignOutState> {

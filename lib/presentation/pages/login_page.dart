@@ -24,40 +24,6 @@ class LoginPage extends StatelessWidget {
     TextEditingController _emailController = TextEditingController();
     TextEditingController _passwordController = TextEditingController();
 
-    String? _passwordValidator(String? value) {
-      final passReg = RegExp(
-        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})',
-      );
-      if (!passReg.hasMatch(value!)) {
-        return 'Password must contain at least 8 characters';
-      }
-      return null;
-    }
-
-    String? _emailValidator(String? value) {
-      final emailRegex = RegExp(
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
-      );
-      if (!emailRegex.hasMatch(value!)) {
-        return 'Please enter a valid email address';
-      }
-      return null;
-    }
-
-    String? _validatePassword(String? value) {
-      if (value != _passwordController.text) {
-        return 'Passwords do not match';
-      }
-      return null;
-    }
-
-    String? _validateEmail(String? value) {
-      if (value != _emailController.text) {
-        return 'Emails do not match';
-      }
-      return null;
-    }
-
     return Scaffold(
       body: Stack(
         children: [
@@ -116,7 +82,7 @@ class LoginPage extends StatelessWidget {
                           if (state is AuthSuccessState) {
                             showToastification(
                               context,
-                              "Loged in Successfully",
+                              "Logged in Successfully",
                               Colors.green,
                               ToastificationType.success,
                             );
@@ -131,16 +97,12 @@ class LoginPage extends StatelessWidget {
                               labelText: 'Email',
                               hintText: 'Enter your email address',
                               controller: _emailController,
-                              validator: _emailValidator,
-                              onChanged: _validateEmail,
                             ),
                             const SizedBox(height: 40),
                             customFormField(
                               labelText: 'Password',
-                              hintText: 'Enter your assword',
+                              hintText: 'Enter your password',
                               controller: _passwordController,
-                              validator: _passwordValidator,
-                              onChanged: _validatePassword,
                               obscureText: true,
                             ),
                           ],
@@ -152,8 +114,7 @@ class LoginPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         InkWell(
-                          onTap: () {
-                          },
+                          onTap: () {},
                           child: Text(
                             "Forget password?",
                             style: TextStyle(

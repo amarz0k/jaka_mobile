@@ -5,14 +5,14 @@ Widget imageDetector(
   String logo,
   double size, {
   bool isCircle = false,
-  double radius = 0,
+  double radius = 100,
   BoxFit fit = BoxFit.cover,
   Color? color,
 }) {
   if (isCircle) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: imageDetector(logo, size),
+      child: imageDetector(logo, size, color: color),
     );
   }
   if (logo.endsWith('.svg')) {

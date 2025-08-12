@@ -2,10 +2,13 @@ import 'package:chat_app/core/auto_route/auth_gaurd.dart';
 import 'package:chat_app/core/hive_service.dart';
 import 'package:chat_app/data/datasources/remote/firebase_auth_data_source.dart';
 import 'package:chat_app/data/repositories/auth_repository_impl.dart';
+import 'package:chat_app/data/repositories/chat_repository_impl.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/auth_repository.dart';
+import 'package:chat_app/domain/repositories/chat_repository.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/domain/usecases/accept_friend_request_usecase.dart';
+import 'package:chat_app/domain/usecases/get_chats_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/get_friends_db_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_by_id_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dart';
@@ -15,6 +18,7 @@ import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_local_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
+import 'package:chat_app/domain/usecases/send_message_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_email_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
@@ -49,6 +53,10 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<UserRepository>(
     () => UserRepositoryImpl(getIt<HiveService>()),
+  );
+
+  getIt.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(getIt<UserRepositoryImpl>()),
   );
 
   // Use cases
@@ -116,6 +124,14 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<AcceptFriendRequestUsecase>(
     () => AcceptFriendRequestUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<SendMessageUsecase>(
+    () => SendMessageUsecase(getIt<ChatRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetChatsReferenceUsecase>(
+    () => GetChatsReferenceUsecase(getIt<ChatRepository>()),
   );
 
   // others

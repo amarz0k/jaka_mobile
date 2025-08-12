@@ -20,16 +20,31 @@ class FriendModel with EntityConvertible<FriendModel, FriendEntity> {
   @JsonKey(name: 'photoUrl')
   final String? photoUrl;
 
+  @HiveField(3)
+  @JsonKey(name: 'lastMessage')
+  final String? lastMessage;
+
+  @HiveField(4)
+  @JsonKey(name: 'lastMessageDate')
+  final DateTime? lastMessageDate;
+
   const FriendModel({
     required this.id,
     required this.name,
     required this.photoUrl,
+    this.lastMessage,
+    this.lastMessageDate,
   });
 
   factory FriendModel.fromJson(Map<String, dynamic> json) =>
       _$FriendModelFromJson(json);
 
   @override
-  FriendEntity toEntity() =>
-      FriendEntity(id: id, name: name, photoUrl: photoUrl);
+  FriendEntity toEntity() => FriendEntity(
+    id: id,
+    name: name,
+    photoUrl: photoUrl,
+    lastMessage: lastMessage,
+    lastMessageDate: lastMessageDate,
+  );
 }

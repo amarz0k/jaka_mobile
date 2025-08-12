@@ -28,6 +28,7 @@ dependencies:
   hive_flutter: ^1.1.0
   image_picker: ^1.1.2
   internet_connection_checker: ^3.0.1
+  intl: ^0.20.2
   json_annotation: ^4.8.1
   json_serializable: ^6.7.1
   toastification: ^3.0.3

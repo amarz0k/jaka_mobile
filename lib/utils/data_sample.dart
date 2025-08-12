@@ -132,3 +132,10 @@ List<Map<String, dynamic>> friendRequests = [
     "name": "Antonios Papadopoulos",
   },
 ];
+
+
+List<Map<String, dynamic>> messages = [
+  {
+    
+  }
+];

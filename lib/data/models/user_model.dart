@@ -29,16 +29,8 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
   final String? photoUrl;
 
   @HiveField(5)
-  @JsonKey(name: 'isOnline')
-  final bool isOnline;
-
-  @HiveField(6)
   @JsonKey(name: 'notifications')
   final bool notifications;
-
-  @HiveField(7)
-  @JsonKey(name: 'lastSeen')
-  final DateTime lastSeen;
 
   const UserModel({
     required this.id,
@@ -46,9 +38,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     required this.email,
     required this.password,
     this.photoUrl,
-    this.isOnline = false,
     this.notifications = true,
-    required this.lastSeen,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -61,9 +51,7 @@ class UserModel with EntityConvertible<UserModel, UserEntity> {
     email: email,
     password: password,
     photoUrl: photoUrl,
-    isOnline: isOnline,
     notifications: notifications,
-    lastSeen: lastSeen,
   );
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);

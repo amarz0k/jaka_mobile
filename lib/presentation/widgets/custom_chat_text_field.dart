@@ -1,4 +1,6 @@
 import 'package:chat_app/constants/app_colors.dart';
+import 'package:chat_app/constants/app_icons.dart';
+import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:flutter/material.dart';
 
 class CustomChatTextField extends StatelessWidget {
@@ -20,43 +22,50 @@ class CustomChatTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60, // Increase this value for more height
-      child: TextField(
-        controller: textEditingController,
-        onChanged: onChanged,
-        obscureText: false,
-        style: TextStyle(
+    return TextField(
+      maxLines: 3,
+      minLines: 1,
+      controller: textEditingController,
+      onChanged: onChanged,
+      obscureText: false,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.w500,
+      ),
+      cursorColor: Colors.white,
+      decoration: InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        hintText: hintText,
+        hintStyle: TextStyle(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w500,
         ),
-        cursorColor: Colors.white,
-        decoration: InputDecoration(
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
+        filled: true,
+        fillColor: AppColors.primaryColor,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(borderRadius!),
+          borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(borderRadius!),
+        ),
+        suffixIconColor: Colors.white,
+        suffixIcon: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onSendPress,
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: imageDetector(
+              AppIcons.send,
+              10,
+              isCircle: true,
+              radius: 0,
+              color: Colors.white,
+            ),
           ),
-          filled: true,
-          fillColor: AppColors.primaryColor,
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(borderRadius!),
-            borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
-          ),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 18,
-          ), // Add vertical padding
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(borderRadius!),
-          ),
-          suffixIconColor: Colors.white,
-          suffixIcon: isSendButtonVisible
-              ? IconButton(onPressed: onSendPress, icon: Icon(Icons.send))
-              : null,
         ),
       ),
     );

@@ -10,8 +10,6 @@ class UserEntity with _$UserEntity {
     required String email,
     @Default(null) String? password,
     String? photoUrl,
-    @Default(false) bool isOnline,
     @Default(true) bool notifications,
-    required DateTime lastSeen,
   }) = _UserEntity;
 }

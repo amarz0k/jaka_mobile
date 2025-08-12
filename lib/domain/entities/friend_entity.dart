@@ -9,5 +9,7 @@ class FriendEntity with _$FriendEntity {
     required String id,
     required String name,
     required String? photoUrl,
+    String? lastMessage,
+    DateTime? lastMessageDate
   }) = _FriendEntity;
 }

@@ -19,6 +19,8 @@ mixin _$FriendEntity {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
+  String? get lastMessage => throw _privateConstructorUsedError;
+  DateTime? get lastMessageDate => throw _privateConstructorUsedError;
 
   /// Create a copy of FriendEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -33,7 +35,12 @@ abstract class $FriendEntityCopyWith<$Res> {
           FriendEntity value, $Res Function(FriendEntity) then) =
       _$FriendEntityCopyWithImpl<$Res, FriendEntity>;
   @useResult
-  $Res call({String id, String name, String? photoUrl});
+  $Res call(
+      {String id,
+      String name,
+      String? photoUrl,
+      String? lastMessage,
+      DateTime? lastMessageDate});
 }
 
 /// @nodoc
@@ -54,6 +61,8 @@ class _$FriendEntityCopyWithImpl<$Res, $Val extends FriendEntity>
     Object? id = null,
     Object? name = null,
     Object? photoUrl = freezed,
+    Object? lastMessage = freezed,
+    Object? lastMessageDate = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -68,6 +77,14 @@ class _$FriendEntityCopyWithImpl<$Res, $Val extends FriendEntity>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      lastMessage: freezed == lastMessage
+          ? _value.lastMessage
+          : lastMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastMessageDate: freezed == lastMessageDate
+          ? _value.lastMessageDate
+          : lastMessageDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -80,7 +97,12 @@ abstract class _$$FriendEntityImplCopyWith<$Res>
       __$$FriendEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, String? photoUrl});
+  $Res call(
+      {String id,
+      String name,
+      String? photoUrl,
+      String? lastMessage,
+      DateTime? lastMessageDate});
 }
 
 /// @nodoc
@@ -99,6 +121,8 @@ class __$$FriendEntityImplCopyWithImpl<$Res>
     Object? id = null,
     Object? name = null,
     Object? photoUrl = freezed,
+    Object? lastMessage = freezed,
+    Object? lastMessageDate = freezed,
   }) {
     return _then(_$FriendEntityImpl(
       id: null == id
@@ -113,6 +137,14 @@ class __$$FriendEntityImplCopyWithImpl<$Res>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      lastMessage: freezed == lastMessage
+          ? _value.lastMessage
+          : lastMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastMessageDate: freezed == lastMessageDate
+          ? _value.lastMessageDate
+          : lastMessageDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -121,7 +153,11 @@ class __$$FriendEntityImplCopyWithImpl<$Res>
 
 class _$FriendEntityImpl with DiagnosticableTreeMixin implements _FriendEntity {
   const _$FriendEntityImpl(
-      {required this.id, required this.name, required this.photoUrl});
+      {required this.id,
+      required this.name,
+      required this.photoUrl,
+      this.lastMessage,
+      this.lastMessageDate});
 
   @override
   final String id;
@@ -129,10 +165,14 @@ class _$FriendEntityImpl with DiagnosticableTreeMixin implements _FriendEntity {
   final String name;
   @override
   final String? photoUrl;
+  @override
+  final String? lastMessage;
+  @override
+  final DateTime? lastMessageDate;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'FriendEntity(id: $id, name: $name, photoUrl: $photoUrl)';
+    return 'FriendEntity(id: $id, name: $name, photoUrl: $photoUrl, lastMessage: $lastMessage, lastMessageDate: $lastMessageDate)';
   }
 
   @override
@@ -142,7 +182,9 @@ class _$FriendEntityImpl with DiagnosticableTreeMixin implements _FriendEntity {
       ..add(DiagnosticsProperty('type', 'FriendEntity'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('photoUrl', photoUrl));
+      ..add(DiagnosticsProperty('photoUrl', photoUrl))
+      ..add(DiagnosticsProperty('lastMessage', lastMessage))
+      ..add(DiagnosticsProperty('lastMessageDate', lastMessageDate));
   }
 
   @override
@@ -153,11 +195,16 @@ class _$FriendEntityImpl with DiagnosticableTreeMixin implements _FriendEntity {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.photoUrl, photoUrl) ||
-                other.photoUrl == photoUrl));
+                other.photoUrl == photoUrl) &&
+            (identical(other.lastMessage, lastMessage) ||
+                other.lastMessage == lastMessage) &&
+            (identical(other.lastMessageDate, lastMessageDate) ||
+                other.lastMessageDate == lastMessageDate));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, photoUrl);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, photoUrl, lastMessage, lastMessageDate);
 
   /// Create a copy of FriendEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -172,7 +219,9 @@ abstract class _FriendEntity implements FriendEntity {
   const factory _FriendEntity(
       {required final String id,
       required final String name,
-      required final String? photoUrl}) = _$FriendEntityImpl;
+      required final String? photoUrl,
+      final String? lastMessage,
+      final DateTime? lastMessageDate}) = _$FriendEntityImpl;
 
   @override
   String get id;
@@ -180,6 +229,10 @@ abstract class _FriendEntity implements FriendEntity {
   String get name;
   @override
   String? get photoUrl;
+  @override
+  String? get lastMessage;
+  @override
+  DateTime? get lastMessageDate;
 
   /// Create a copy of FriendEntity
   /// with the given fields replaced by the non-null parameter values.

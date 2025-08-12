@@ -140,7 +140,7 @@ class UserRepositoryImpl implements UserRepository {
     }
   }
 
-  String _createSafeFirebasePath(String input) {
+  String createSafeFirebasePath(String input) {
     return input
         .replaceAll('#', '_')
         .replaceAll('.', '_')
@@ -184,7 +184,7 @@ class UserRepositoryImpl implements UserRepository {
     }
     final friend = await getUserById(id);
     final requestId =
-        '${_createSafeFirebasePath(currentUser.id)}_${_createSafeFirebasePath(friend!.id)}';
+        '${createSafeFirebasePath(currentUser.id)}_${createSafeFirebasePath(friend!.id)}';
 
     final dbRef = getIt<FirebaseDatabase>().ref().child('friends/$requestId');
 
@@ -205,8 +205,8 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   Future<bool> requestExists(String senderId, String receiverId) async {
-    final safeSenderId = _createSafeFirebasePath(senderId);
-    final safeReceiverId = _createSafeFirebasePath(receiverId);
+    final safeSenderId = createSafeFirebasePath(senderId);
+    final safeReceiverId = createSafeFirebasePath(receiverId);
 
     final snapshot = await getIt<FirebaseDatabase>()
         .ref()
@@ -237,9 +237,9 @@ class UserRepositoryImpl implements UserRepository {
       }
 
       final path1 =
-          'friends/${_createSafeFirebasePath(friendId)}_${_createSafeFirebasePath(currentUser.id)}';
+          'friends/${createSafeFirebasePath(friendId)}_${createSafeFirebasePath(currentUser.id)}';
       final path2 =
-          'friends/${_createSafeFirebasePath(currentUser.id)}_${_createSafeFirebasePath(friendId)}';
+          'friends/${createSafeFirebasePath(currentUser.id)}_${createSafeFirebasePath(friendId)}';
 
       // Remove both possible paths (only one will exist)
       await getIt<FirebaseDatabase>().ref().child(path1).remove();
@@ -269,7 +269,7 @@ class UserRepositoryImpl implements UserRepository {
       }
 
       final path1 =
-          'friends/${_createSafeFirebasePath(friendId)}_${_createSafeFirebasePath(currentUser.id)}';
+          'friends/${createSafeFirebasePath(friendId)}_${createSafeFirebasePath(currentUser.id)}';
 
       await getIt<FirebaseDatabase>().ref().child(path1).update({
         'status': 'accepted',

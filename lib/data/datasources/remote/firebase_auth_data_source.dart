@@ -63,9 +63,7 @@ class FirebaseDataSource {
         email: userCredential.user!.email!,
         photoUrl: userCredential.user!.photoURL!,
         password: "",
-        isOnline: true,
         notifications: true,
-        lastSeen: DateTime.now(),
       );
 
       getIt<UserRepository>().saveUserToRealtimeDatabase(userData);
@@ -140,8 +138,6 @@ class FirebaseDataSource {
         password: password,
         photoUrl:
             "https://ui-avatars.com/api/?name=${name.replaceAll(' ', '+')}&background=4e40d1&color=fff&size=128",
-        isOnline: true,
-        lastSeen: DateTime.now(),
       );
 
       final userRef = getIt<FirebaseDatabase>()

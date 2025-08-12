@@ -14,6 +14,7 @@ import 'package:chat_app/presentation/widgets/friend_request_widget.dart';
 import 'package:chat_app/presentation/widgets/friend_widget.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
+import 'package:chat_app/utils/date_style_converter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toastification/toastification.dart';
@@ -322,8 +323,12 @@ class HomePage extends StatelessWidget {
                                             request.photoUrl ??
                                             'https://via.placeholder.com/150',
                                         name: request.name,
-                                        lastMessage: null,
-                                        time: null,
+                                        lastMessage: request.lastMessage,
+                                        time: request.lastMessageDate != null
+                                            ? DateStyleConverter.covertToTimeStyle(
+                                                request.lastMessageDate!,
+                                              )
+                                            : null,
                                         nameFontSize: 20,
                                         lastMessageFontSize: 16,
                                         onTap: () {

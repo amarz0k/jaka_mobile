@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/core/auto_route/app_router.dart';
 import 'package:chat_app/presentation/widgets/custom_arrow_back_button.dart';
 import 'package:chat_app/presentation/widgets/custom_chat_text_field.dart';
+import 'package:chat_app/presentation/widgets/custom_message_widget.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:flutter/material.dart';
 
@@ -28,31 +29,29 @@ class ConversationPage extends StatelessWidget {
         scrolledUnderElevation: 0, // Prevents color change on scroll
         backgroundColor: Colors.white, // Set a consistent background color
         elevation: 0, // Remove shadow
-        title: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                context.router.push(
-                  FriendDetailsRoute(
-                    friendId: friendId,
-                    friendName: friendName,
-                    friendPhotoUrl: friendPhotoUrl,
-                  ),
-                );
-              },
-              child: imageDetector(
-                friendPhotoUrl!,
-                50,
-                isCircle: true,
-                radius: 100,
+        title: GestureDetector(
+          onTap: () {
+            context.router.push(
+              FriendDetailsRoute(
+                friendId: friendId,
+                friendName: friendName,
+                friendPhotoUrl: friendPhotoUrl,
               ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              friendName,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
-            ),
-          ],
+            );
+          },
+          child: Row(
+            children: [
+              imageDetector(friendPhotoUrl!, 50, isCircle: true, radius: 100),
+              const SizedBox(width: 10),
+              Text(
+                friendName,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
         leadingWidth: 60,
         leading: Row(children: [Spacer(), CustomArrowBackButton()]),
@@ -67,9 +66,15 @@ class ConversationPage extends StatelessWidget {
               left: 0,
               right: 0,
               child: ListView.builder(
-                itemCount: 100,
+                itemCount: 2,
                 itemBuilder: (context, index) {
-                  return Text("data");
+                  return CustomMessageWidget(
+                    text:
+                        "Hello My Friend Ahmed Hello My Friend Ahmed Hello My Friend Ahmed Hello My Friend Ahmed Hello My Friend Ahmed",
+                    imageUrl: friendPhotoUrl,
+                    dateTime: DateTime.now(),
+                    isSender: true,
+                  );
                 },
               ),
             ),
@@ -88,6 +93,9 @@ class ConversationPage extends StatelessWidget {
                   }
                 },
                 isSendButtonVisible: isSendButtonVisible,
+                onSendPress: () {
+                  
+                },
               ),
             ),
           ],

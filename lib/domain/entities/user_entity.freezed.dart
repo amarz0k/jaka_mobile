@@ -21,9 +21,7 @@ mixin _$UserEntity {
   String get email => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
-  bool get isOnline => throw _privateConstructorUsedError;
   bool get notifications => throw _privateConstructorUsedError;
-  DateTime get lastSeen => throw _privateConstructorUsedError;
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -44,9 +42,7 @@ abstract class $UserEntityCopyWith<$Res> {
       String email,
       String? password,
       String? photoUrl,
-      bool isOnline,
-      bool notifications,
-      DateTime lastSeen});
+      bool notifications});
 }
 
 /// @nodoc
@@ -69,9 +65,7 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
     Object? email = null,
     Object? password = freezed,
     Object? photoUrl = freezed,
-    Object? isOnline = null,
     Object? notifications = null,
-    Object? lastSeen = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -94,18 +88,10 @@ class _$UserEntityCopyWithImpl<$Res, $Val extends UserEntity>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      isOnline: null == isOnline
-          ? _value.isOnline
-          : isOnline // ignore: cast_nullable_to_non_nullable
-              as bool,
       notifications: null == notifications
           ? _value.notifications
           : notifications // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastSeen: null == lastSeen
-          ? _value.lastSeen
-          : lastSeen // ignore: cast_nullable_to_non_nullable
-              as DateTime,
     ) as $Val);
   }
 }
@@ -124,9 +110,7 @@ abstract class _$$UserEntityImplCopyWith<$Res>
       String email,
       String? password,
       String? photoUrl,
-      bool isOnline,
-      bool notifications,
-      DateTime lastSeen});
+      bool notifications});
 }
 
 /// @nodoc
@@ -147,9 +131,7 @@ class __$$UserEntityImplCopyWithImpl<$Res>
     Object? email = null,
     Object? password = freezed,
     Object? photoUrl = freezed,
-    Object? isOnline = null,
     Object? notifications = null,
-    Object? lastSeen = null,
   }) {
     return _then(_$UserEntityImpl(
       id: null == id
@@ -172,18 +154,10 @@ class __$$UserEntityImplCopyWithImpl<$Res>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      isOnline: null == isOnline
-          ? _value.isOnline
-          : isOnline // ignore: cast_nullable_to_non_nullable
-              as bool,
       notifications: null == notifications
           ? _value.notifications
           : notifications // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastSeen: null == lastSeen
-          ? _value.lastSeen
-          : lastSeen // ignore: cast_nullable_to_non_nullable
-              as DateTime,
     ));
   }
 }
@@ -197,9 +171,7 @@ class _$UserEntityImpl implements _UserEntity {
       required this.email,
       this.password = null,
       this.photoUrl,
-      this.isOnline = false,
-      this.notifications = true,
-      required this.lastSeen});
+      this.notifications = true});
 
   @override
   final String id;
@@ -214,16 +186,11 @@ class _$UserEntityImpl implements _UserEntity {
   final String? photoUrl;
   @override
   @JsonKey()
-  final bool isOnline;
-  @override
-  @JsonKey()
   final bool notifications;
-  @override
-  final DateTime lastSeen;
 
   @override
   String toString() {
-    return 'UserEntity(id: $id, name: $name, email: $email, password: $password, photoUrl: $photoUrl, isOnline: $isOnline, notifications: $notifications, lastSeen: $lastSeen)';
+    return 'UserEntity(id: $id, name: $name, email: $email, password: $password, photoUrl: $photoUrl, notifications: $notifications)';
   }
 
   @override
@@ -238,17 +205,13 @@ class _$UserEntityImpl implements _UserEntity {
                 other.password == password) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
-            (identical(other.isOnline, isOnline) ||
-                other.isOnline == isOnline) &&
             (identical(other.notifications, notifications) ||
-                other.notifications == notifications) &&
-            (identical(other.lastSeen, lastSeen) ||
-                other.lastSeen == lastSeen));
+                other.notifications == notifications));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, password,
-      photoUrl, isOnline, notifications, lastSeen);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, email, password, photoUrl, notifications);
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -266,9 +229,7 @@ abstract class _UserEntity implements UserEntity {
       required final String email,
       final String? password,
       final String? photoUrl,
-      final bool isOnline,
-      final bool notifications,
-      required final DateTime lastSeen}) = _$UserEntityImpl;
+      final bool notifications}) = _$UserEntityImpl;
 
   @override
   String get id;
@@ -281,11 +242,7 @@ abstract class _UserEntity implements UserEntity {
   @override
   String? get photoUrl;
   @override
-  bool get isOnline;
-  @override
   bool get notifications;
-  @override
-  DateTime get lastSeen;
 
   /// Create a copy of UserEntity
   /// with the given fields replaced by the non-null parameter values.

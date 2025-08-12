@@ -6,4 +6,5 @@ class AppIcons {
   static const String faq = 'assets/icons/faq.png';
   static const String notification = 'assets/icons/notification.png';
   static const String arrowBack = 'assets/icons/arrow_back.png';
+  static const String send = 'assets/icons/send_icon.png';
 }

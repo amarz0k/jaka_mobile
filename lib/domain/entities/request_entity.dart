@@ -9,5 +9,7 @@ class RequestEntity with _$RequestEntity {
     required String receiverId,
     required String sentAt,
     required String status,
+    String? lastMessage,
+    DateTime? lastMessageDate,
   }) = _RequestEntity;
 }

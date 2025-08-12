@@ -41,6 +41,30 @@ class ChatRepositoryImpl implements ChatRepository {
     return {'chat1': false, 'chat2': false};
   }
 
+  Future<Map<String, bool>> checkExsistingFriend(
+    String path1,
+    String path2,
+  ) async {
+    final friendDBRef1 = getIt<FirebaseDatabase>().ref().child(path1);
+    final friendDBRef2 = getIt<FirebaseDatabase>().ref().child(path2);
+
+    final friend1 = await friendDBRef1.get();
+    final friend2 = await friendDBRef2.get();
+
+    if (!friend1.exists && !friend2.exists) {
+      return {'friend1': false, 'friend2': false};
+    }
+
+    if (friend1.exists) {
+      return {'friend1': true, 'friend2': false};
+    }
+
+    if (friend2.exists) {
+      return {'friend1': false, 'friend2': true};
+    }
+    return {'friend1': false, 'friend2': false};
+  }
+
   @override
   Future<void> sendMessage(
     String message,
@@ -59,15 +83,25 @@ class ChatRepositoryImpl implements ChatRepository {
           '${_userRepository.createSafeFirebasePath(receiverId)}_${_userRepository.createSafeFirebasePath(senderId)}';
 
       final chatPath1 = 'chats/$chatId1/messages';
-
       final chatPath2 = 'chats/$chatId2/messages';
+
+      final friendPath1 = 'friends/$chatId1';
+      final friendPath2 = 'friends/$chatId2';
 
       final chatsDBRef1 = getIt<FirebaseDatabase>().ref().child(chatPath1);
       final chatsDBRef2 = getIt<FirebaseDatabase>().ref().child(chatPath2);
 
+      final friendsDBRef1 = getIt<FirebaseDatabase>().ref().child(friendPath1);
+      final friendsDBRef2 = getIt<FirebaseDatabase>().ref().child(friendPath2);
+
       final Map<String, bool> exsistingChat = await checkExsistingChat(
         senderId,
         receiverId,
+      );
+
+      final Map<String, bool> exsistingFriend = await checkExsistingFriend(
+        friendPath1,
+        friendPath2,
       );
 
       if (exsistingChat['chat1'] == true) {
@@ -91,6 +125,23 @@ class ChatRepositoryImpl implements ChatRepository {
           'receiverId': receiverId,
           'text': message,
           'sentAt': DateTime.now().toIso8601String(),
+        });
+      }
+
+      if (exsistingFriend['friend1'] == true) {
+        await friendsDBRef1.update({
+          'lastMessage': message,
+          'lastMessageDate': DateTime.now().toIso8601String(),
+        });
+      } else if (exsistingFriend['friend2'] == true) {
+        await friendsDBRef2.update({
+          'lastMessage': message,
+          'lastMessageDate': DateTime.now().toIso8601String(),
+        });
+      } else {
+        await friendsDBRef1.update({
+          'lastMessage': message,
+          'lastMessageDate': DateTime.now().toIso8601String(),
         });
       }
     } catch (e) {

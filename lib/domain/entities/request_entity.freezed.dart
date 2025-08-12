@@ -20,6 +20,8 @@ mixin _$RequestEntity {
   String get receiverId => throw _privateConstructorUsedError;
   String get sentAt => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
+  String? get lastMessage => throw _privateConstructorUsedError;
+  DateTime? get lastMessageDate => throw _privateConstructorUsedError;
 
   /// Create a copy of RequestEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -34,7 +36,13 @@ abstract class $RequestEntityCopyWith<$Res> {
           RequestEntity value, $Res Function(RequestEntity) then) =
       _$RequestEntityCopyWithImpl<$Res, RequestEntity>;
   @useResult
-  $Res call({String senderId, String receiverId, String sentAt, String status});
+  $Res call(
+      {String senderId,
+      String receiverId,
+      String sentAt,
+      String status,
+      String? lastMessage,
+      DateTime? lastMessageDate});
 }
 
 /// @nodoc
@@ -56,6 +64,8 @@ class _$RequestEntityCopyWithImpl<$Res, $Val extends RequestEntity>
     Object? receiverId = null,
     Object? sentAt = null,
     Object? status = null,
+    Object? lastMessage = freezed,
+    Object? lastMessageDate = freezed,
   }) {
     return _then(_value.copyWith(
       senderId: null == senderId
@@ -74,6 +84,14 @@ class _$RequestEntityCopyWithImpl<$Res, $Val extends RequestEntity>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
+      lastMessage: freezed == lastMessage
+          ? _value.lastMessage
+          : lastMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastMessageDate: freezed == lastMessageDate
+          ? _value.lastMessageDate
+          : lastMessageDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -86,7 +104,13 @@ abstract class _$$RequestEntityImplCopyWith<$Res>
       __$$RequestEntityImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String senderId, String receiverId, String sentAt, String status});
+  $Res call(
+      {String senderId,
+      String receiverId,
+      String sentAt,
+      String status,
+      String? lastMessage,
+      DateTime? lastMessageDate});
 }
 
 /// @nodoc
@@ -106,6 +130,8 @@ class __$$RequestEntityImplCopyWithImpl<$Res>
     Object? receiverId = null,
     Object? sentAt = null,
     Object? status = null,
+    Object? lastMessage = freezed,
+    Object? lastMessageDate = freezed,
   }) {
     return _then(_$RequestEntityImpl(
       senderId: null == senderId
@@ -124,6 +150,14 @@ class __$$RequestEntityImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as String,
+      lastMessage: freezed == lastMessage
+          ? _value.lastMessage
+          : lastMessage // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastMessageDate: freezed == lastMessageDate
+          ? _value.lastMessageDate
+          : lastMessageDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -135,7 +169,9 @@ class _$RequestEntityImpl implements _RequestEntity {
       {required this.senderId,
       required this.receiverId,
       required this.sentAt,
-      required this.status});
+      required this.status,
+      this.lastMessage,
+      this.lastMessageDate});
 
   @override
   final String senderId;
@@ -145,10 +181,14 @@ class _$RequestEntityImpl implements _RequestEntity {
   final String sentAt;
   @override
   final String status;
+  @override
+  final String? lastMessage;
+  @override
+  final DateTime? lastMessageDate;
 
   @override
   String toString() {
-    return 'RequestEntity(senderId: $senderId, receiverId: $receiverId, sentAt: $sentAt, status: $status)';
+    return 'RequestEntity(senderId: $senderId, receiverId: $receiverId, sentAt: $sentAt, status: $status, lastMessage: $lastMessage, lastMessageDate: $lastMessageDate)';
   }
 
   @override
@@ -161,12 +201,16 @@ class _$RequestEntityImpl implements _RequestEntity {
             (identical(other.receiverId, receiverId) ||
                 other.receiverId == receiverId) &&
             (identical(other.sentAt, sentAt) || other.sentAt == sentAt) &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.lastMessage, lastMessage) ||
+                other.lastMessage == lastMessage) &&
+            (identical(other.lastMessageDate, lastMessageDate) ||
+                other.lastMessageDate == lastMessageDate));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, senderId, receiverId, sentAt, status);
+  int get hashCode => Object.hash(runtimeType, senderId, receiverId, sentAt,
+      status, lastMessage, lastMessageDate);
 
   /// Create a copy of RequestEntity
   /// with the given fields replaced by the non-null parameter values.
@@ -182,7 +226,9 @@ abstract class _RequestEntity implements RequestEntity {
       {required final String senderId,
       required final String receiverId,
       required final String sentAt,
-      required final String status}) = _$RequestEntityImpl;
+      required final String status,
+      final String? lastMessage,
+      final DateTime? lastMessageDate}) = _$RequestEntityImpl;
 
   @override
   String get senderId;
@@ -192,6 +238,10 @@ abstract class _RequestEntity implements RequestEntity {
   String get sentAt;
   @override
   String get status;
+  @override
+  String? get lastMessage;
+  @override
+  DateTime? get lastMessageDate;
 
   /// Create a copy of RequestEntity
   /// with the given fields replaced by the non-null parameter values.

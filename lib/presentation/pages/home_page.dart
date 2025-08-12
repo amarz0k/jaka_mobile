@@ -153,38 +153,26 @@ class HomePage extends StatelessWidget {
                       actions: [
                         Padding(
                           padding: const EdgeInsets.only(right: 8.0),
-                          child: Row(
-                            children: [
-                              CustomIconButton(
-                                size: 40,
-                                iconColor: AppColors.lightBlack,
-                                borderColor: AppColors.primaryColor,
-                                icon: Icons.search,
-                                onPressed: () {},
-                              ),
-                              const SizedBox(width: 10),
-                              CustomIconButton(
-                                size: 45,
-                                iconColor: AppColors.lightBlack,
-                                borderColor: Colors.transparent,
-                                isIcon: true,
-                                onPressed: () =>
-                                    context.router.push(const SettingsRoute()),
-                                widget: state.user.photoUrl != null
-                                    ? imageDetector(
-                                        state.user.photoUrl!,
-                                        100,
-                                        isCircle: true,
-                                        radius: 100,
-                                      )
-                                    : imageDetector(
-                                        "https://via.placeholder.com/150",
-                                        100,
-                                        isCircle: true,
-                                        radius: 100,
-                                      ),
-                              ),
-                            ],
+                          child: CustomIconButton(
+                            size: 50,
+                            iconColor: AppColors.lightBlack,
+                            borderColor: Colors.transparent,
+                            isIcon: true,
+                            onPressed: () =>
+                                context.router.push(const SettingsRoute()),
+                            widget: state.user.photoUrl != null
+                                ? imageDetector(
+                                    state.user.photoUrl!,
+                                    100,
+                                    isCircle: true,
+                                    radius: 100,
+                                  )
+                                : imageDetector(
+                                    "https://via.placeholder.com/150",
+                                    100,
+                                    isCircle: true,
+                                    radius: 100,
+                                  ),
                           ),
                         ),
                       ],
@@ -367,7 +355,7 @@ class HomePage extends StatelessWidget {
                                 return Padding(
                                   padding: const EdgeInsets.all(20.0),
                                   child: Center(
-                                    child: CircularProgressIndicator(),
+                                    child: Text("You have no friends"),
                                   ),
                                 );
                               },

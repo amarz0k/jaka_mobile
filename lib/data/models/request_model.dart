@@ -24,12 +24,22 @@ class RequestModel with EntityConvertible<RequestModel, RequestEntity> {
   @JsonKey(name: 'status')
   final String status;
 
+  @HiveField(4)
+  @JsonKey(name: 'lastMessage')
+  final String? lastMessage;
+
+  @HiveField(5)
+  @JsonKey(name: 'lastMessageDate')
+  final String? lastMessageDate;
+
 
   const RequestModel({
     required this.senderId,
     required this.receiverId,
     required this.sentAt, 
     required this.status,
+    this.lastMessage,
+    this.lastMessageDate,
   });
 
   factory RequestModel.fromJson(Map<String, dynamic> json) =>
@@ -41,6 +51,8 @@ class RequestModel with EntityConvertible<RequestModel, RequestEntity> {
     receiverId: receiverId,
     sentAt: sentAt,
     status: status,
+    lastMessage: lastMessage,
+    lastMessageDate: lastMessageDate != null ? DateTime.parse(lastMessageDate!) : null,
   );
 
   Map<String, dynamic> toJson() => _$RequestModelToJson(this);

@@ -133,32 +133,38 @@ class UserDataCubit extends Cubit<UserDataState> {
       }
 
       if (friend['status'] == 'accepted') {
-
         if (friend['acceptedAt'] != null &&
-                friend['acceptedAt'] != "" &&
-                friend['receiverId'] == _currentUserId ) {
+            friend['acceptedAt'] != "" &&
+            friend['receiverId'] == _currentUserId) {
           final request = RequestEntity(
             senderId: friend['senderId'] as String,
             receiverId: friend['receiverId'] as String,
             sentAt: friend['sentAt'] as String,
             status: friend['status'] as String,
+            lastMessage:
+                friend['lastMessage'] as String?, // Change to nullable String
+            lastMessageDate: friend['lastMessageDate'] != null
+                ? DateTime.parse(friend['lastMessageDate'] as String)
+                : null,
           );
 
           acceptedRequests.add(request);
         } else if (friend['acceptedAt'] != null &&
             friend['acceptedAt'] != "" &&
             friend['senderId'] == _currentUserId) {
-                      final request = RequestEntity(
+          final request = RequestEntity(
             senderId: friend['receiverId'] as String,
             receiverId: friend['senderId'] as String,
             sentAt: friend['sentAt'] as String,
             status: friend['status'] as String,
+            lastMessage: friend['lastMessage'] as String?,
+            lastMessageDate: friend['lastMessageDate'] != null
+                ? DateTime.parse(friend['lastMessageDate'] as String)
+                : null,
           );
           acceptedRequests.add(request);
         }
       }
-
-      
     });
 
     // Process incoming requests
@@ -209,6 +215,8 @@ class UserDataCubit extends Cubit<UserDataState> {
               id: request.senderId,
               name: friendData.name,
               photoUrl: friendData.photoUrl,
+              lastMessage: request.lastMessage,
+              lastMessageDate: request.lastMessageDate,
             ),
           );
         }

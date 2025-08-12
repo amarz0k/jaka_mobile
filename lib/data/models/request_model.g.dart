@@ -11,6 +11,8 @@ RequestModel _$RequestModelFromJson(Map<String, dynamic> json) => RequestModel(
       receiverId: json['receiverId'] as String,
       sentAt: json['sentAt'] as String,
       status: json['status'] as String,
+      lastMessage: json['lastMessage'] as String?,
+      lastMessageDate: json['lastMessageDate'] as String?,
     );
 
 Map<String, dynamic> _$RequestModelToJson(RequestModel instance) =>
@@ -19,4 +21,6 @@ Map<String, dynamic> _$RequestModelToJson(RequestModel instance) =>
       'receiverId': instance.receiverId,
       'sentAt': instance.sentAt,
       'status': instance.status,
+      'lastMessage': instance.lastMessage,
+      'lastMessageDate': instance.lastMessageDate,
     };

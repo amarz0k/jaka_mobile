@@ -17,14 +17,14 @@ import 'package:toastification/toastification.dart';
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
 
+  static final _formKey = GlobalKey<FormState>();
+  static TextEditingController _emailController = TextEditingController();
+  static TextEditingController _passwordController = TextEditingController();
+  static TextEditingController _confirmPasswordController =
+      TextEditingController();
+  static TextEditingController _displayNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
-    TextEditingController _confirmPasswordController = TextEditingController();
-    TextEditingController _displayNameController = TextEditingController();
-    final _formKey = GlobalKey<FormState>();
-
     return Scaffold(
       body: Stack(
         children: [

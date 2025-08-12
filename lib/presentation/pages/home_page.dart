@@ -194,7 +194,7 @@ class HomePage extends StatelessWidget {
                           children: [
                             Container(
                               margin: const EdgeInsets.symmetric(
-                                horizontal: 30,
+                                horizontal: 20,
                                 vertical: 20,
                               ),
                               decoration: BoxDecoration(
@@ -281,7 +281,7 @@ class HomePage extends StatelessWidget {
                       ),
                     ),
                     body: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
                       child: TabBarView(
                         children: [
                           SizedBox(
@@ -375,204 +375,215 @@ class HomePage extends StatelessWidget {
                           ),
 
                           SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 20),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 20),
 
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Incoming Requests",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Incoming Requests",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                BlocBuilder<UserDataCubit, UserDataState>(
-                                  builder: (context, requestsState) {
-                                    List<FriendEntity>? incomingRequests;
+                                    ],
+                                  ),
+                                  BlocBuilder<UserDataCubit, UserDataState>(
+                                    builder: (context, requestsState) {
+                                      List<FriendEntity>? incomingRequests;
 
-                                    // Extract incoming requests from different state types
-                                    if (requestsState is UserDataLoadedState) {
-                                      incomingRequests =
-                                          requestsState.incomingRequests;
-                                    }
+                                      // Extract incoming requests from different state types
+                                      if (requestsState
+                                          is UserDataLoadedState) {
+                                        incomingRequests =
+                                            requestsState.incomingRequests;
+                                      }
 
-                                    if (incomingRequests != null) {
-                                      if (incomingRequests.isEmpty) {
+                                      if (incomingRequests != null) {
+                                        if (incomingRequests.isEmpty) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(20.0),
+                                            child: Text(
+                                              "No incoming requests",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        return ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: incomingRequests.length,
+                                          itemBuilder: (context, index) {
+                                            final request =
+                                                incomingRequests![index];
+                                            return FriendRequestWidget(
+                                              profilePicture:
+                                                  request.photoUrl ??
+                                                  'https://via.placeholder.com/150',
+                                              name: request.name,
+                                              isIncoming: true,
+                                              onAccept: () {
+                                                context
+                                                    .read<UserDataCubit>()
+                                                    .acceptFriendRequest(
+                                                      request.id,
+                                                    );
+                                              },
+                                              onReject: () {
+                                                context
+                                                    .read<UserDataCubit>()
+                                                    .rejectFriendRequest(
+                                                      request.id,
+                                                    );
+                                              },
+                                            );
+                                          },
+                                        );
+                                      } else if (requestsState
+                                          is LoadingState) {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(20.0),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      } else if (requestsState
+                                          is FailureState) {
                                         return Padding(
                                           padding: const EdgeInsets.all(20.0),
                                           child: Text(
-                                            "No incoming requests",
+                                            "Failed to load incoming requests",
                                             style: TextStyle(
                                               fontSize: 16,
-                                              color: Colors.grey.shade600,
+                                              color: Colors.red,
                                             ),
                                           ),
                                         );
                                       }
 
-                                      return ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: incomingRequests.length,
-                                        itemBuilder: (context, index) {
-                                          final request =
-                                              incomingRequests![index];
-                                          return FriendRequestWidget(
-                                            profilePicture:
-                                                request.photoUrl ??
-                                                'https://via.placeholder.com/150',
-                                            name: request.name,
-                                            isIncoming: true,
-                                            onAccept: () {
-                                              context
-                                                  .read<UserDataCubit>()
-                                                  .acceptFriendRequest(
-                                                    request.id,
-                                                  );
-                                            },
-                                            onReject: () {
-                                              context
-                                                  .read<UserDataCubit>()
-                                                  .rejectFriendRequest(
-                                                    request.id,
-                                                  );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    } else if (requestsState is LoadingState) {
-                                      return const Padding(
-                                        padding: EdgeInsets.all(20.0),
-                                        child: Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      );
-                                    } else if (requestsState is FailureState) {
+                                      // Default case - show empty state
                                       return Padding(
                                         padding: const EdgeInsets.all(20.0),
                                         child: Text(
-                                          "Failed to load incoming requests",
+                                          "No incoming requests",
                                           style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.red,
+                                            color: Colors.grey.shade600,
                                           ),
                                         ),
                                       );
-                                    }
-
-                                    // Default case - show empty state
-                                    return Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        "No incoming requests",
+                                    },
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Outgoing Requests",
                                         style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey.shade600,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Outgoing Requests",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                BlocBuilder<UserDataCubit, UserDataState>(
-                                  builder: (context, requestsState) {
-                                    List<FriendEntity>? outgoingRequests;
+                                    ],
+                                  ),
+                                  BlocBuilder<UserDataCubit, UserDataState>(
+                                    builder: (context, requestsState) {
+                                      List<FriendEntity>? outgoingRequests;
 
-                                    // Extract incoming requests from different state types
-                                    if (requestsState is UserDataLoadedState) {
-                                      outgoingRequests =
-                                          requestsState.outgoingRequests;
-                                    }
+                                      // Extract incoming requests from different state types
+                                      if (requestsState
+                                          is UserDataLoadedState) {
+                                        outgoingRequests =
+                                            requestsState.outgoingRequests;
+                                      }
 
-                                    if (outgoingRequests != null) {
-                                      if (outgoingRequests.isEmpty) {
+                                      if (outgoingRequests != null) {
+                                        if (outgoingRequests.isEmpty) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(20.0),
+                                            child: Text(
+                                              "No outgoing requests",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        return ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemCount: outgoingRequests.length,
+                                          itemBuilder: (context, index) {
+                                            final request =
+                                                outgoingRequests![index];
+                                            return FriendRequestWidget(
+                                              profilePicture:
+                                                  request.photoUrl ??
+                                                  'https://via.placeholder.com/150',
+                                              name: request.name,
+                                              isIncoming: false,
+                                              onReject: () {
+                                                context
+                                                    .read<UserDataCubit>()
+                                                    .rejectFriendRequest(
+                                                      request.id,
+                                                    );
+                                              },
+                                            );
+                                          },
+                                        );
+                                      } else if (requestsState
+                                          is LoadingState) {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(20.0),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      } else if (requestsState
+                                          is FailureState) {
                                         return Padding(
                                           padding: const EdgeInsets.all(20.0),
                                           child: Text(
-                                            "No outgoing requests",
+                                            "Failed to load outgoing requests",
                                             style: TextStyle(
                                               fontSize: 16,
-                                              color: Colors.grey.shade600,
+                                              color: Colors.red,
                                             ),
                                           ),
                                         );
                                       }
 
-                                      return ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount: outgoingRequests.length,
-                                        itemBuilder: (context, index) {
-                                          final request =
-                                              outgoingRequests![index];
-                                          return FriendRequestWidget(
-                                            profilePicture:
-                                                request.photoUrl ??
-                                                'https://via.placeholder.com/150',
-                                            name: request.name,
-                                            isIncoming: false,
-                                            onReject: () {
-                                              context
-                                                  .read<UserDataCubit>()
-                                                  .rejectFriendRequest(
-                                                    request.id,
-                                                  );
-                                            },
-                                          );
-                                        },
-                                      );
-                                    } else if (requestsState is LoadingState) {
-                                      return const Padding(
-                                        padding: EdgeInsets.all(20.0),
-                                        child: Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      );
-                                    } else if (requestsState is FailureState) {
+                                      // Default case - show empty state
                                       return Padding(
                                         padding: const EdgeInsets.all(20.0),
                                         child: Text(
-                                          "Failed to load outgoing requests",
+                                          "No outgoing requests",
                                           style: TextStyle(
                                             fontSize: 16,
-                                            color: Colors.red,
+                                            color: Colors.grey.shade600,
                                           ),
                                         ),
                                       );
-                                    }
-
-                                    // Default case - show empty state
-                                    return Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                        "No outgoing requests",
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

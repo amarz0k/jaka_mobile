@@ -148,6 +148,8 @@ Future<dynamic> changePassordBottomSheet(BuildContext context) {
                               }
                             },
                             style: ElevatedButton.styleFrom(
+                              // increase height
+                              minimumSize: Size(double.infinity, 50),
                               overlayColor: Colors.transparent,
                               elevation: 2,
                               backgroundColor: AppColors.primaryColor,

@@ -1,6 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
+import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
+import 'package:chat_app/presentation/widgets/image_detector.dart';
+import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toastification/toastification.dart';
 
 @RoutePage()
 class UserProfilePage extends StatelessWidget {
@@ -13,15 +20,83 @@ class UserProfilePage extends StatelessWidget {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          "User Profile",
+          "User Settings",
           style: TextStyle(
-            fontSize: 25,
+            fontSize: 28,
             color: AppColors.lightBlack,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
-      body: Center(),
+      body: BlocBuilder<UserDataCubit, UserDataState>(
+        builder: (context, state) {
+          if (state is LoadingState) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is FailureState) {
+            return Center(child: Text('Failed to load user info'));
+          }
+
+          if (state is UserDataLoadedState) {
+            final photoUrl = state.user.photoUrl!;
+            final name = state.user.name;
+            final id = state.user.id;
+
+            return Column(
+              children: [
+                const SizedBox(height: 20),
+                GestureDetector(
+                  onTap: () {},
+                  child: Center(
+                    child: imageDetector(photoUrl, 200, isCircle: true),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.lightBlack,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      id,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: id));
+                        showToastification(
+                          context,
+                          'Copied to clipboard',
+                          Colors.green,
+                          ToastificationType.success,
+                        );
+                      },
+                      child: Icon(
+                        Icons.copy,
+                        color: AppColors.lightBlack,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 }

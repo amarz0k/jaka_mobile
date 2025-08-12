@@ -50,9 +50,9 @@ class CustomMessageWidget extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1000,
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 20,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             SizedBox(height: 10),

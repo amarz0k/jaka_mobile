@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:chat_app/core/di/service_locator.dart';
-import 'package:chat_app/data/repositories/chat_repository_impl.dart';
 import 'package:chat_app/domain/entities/message_entity.dart';
 import 'package:chat_app/domain/entities/user_entity.dart';
 import 'package:chat_app/domain/repositories/chat_repository.dart';
@@ -16,27 +15,31 @@ class ConversationCubit extends Cubit<ConversationState> {
   final SendMessageUsecase _sendMessageUsecase;
   final GetChatsReferenceUsecase _getChatsReferenceUsecase;
   StreamSubscription? _chatMessagesSubscription;
-  ChatRepositoryImpl? _chatRepositoryImpl;
 
   ConversationCubit({required ChatRepository chatRepository})
     : _sendMessageUsecase = getIt<SendMessageUsecase>(),
       _getChatsReferenceUsecase = getIt<GetChatsReferenceUsecase>(),
-      _chatRepositoryImpl = getIt<ChatRepositoryImpl>(),
       super(ConversationInitialState());
 
   Future<void> sendMessage(String message, String receiverId) async {
     try {
       final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
           .call();
-      
-      log("sendMessage: currentUser: ${currentUser.id}, receiverId: $receiverId");
-      
+
+      log(
+        "sendMessage: currentUser: ${currentUser.id}, receiverId: $receiverId",
+      );
+
       if (currentUser.id == receiverId) {
         log("Error: Trying to send message to self!");
-        emit(ConversationFailureState(error: "You cannot send a message to yourself"));
+        emit(
+          ConversationFailureState(
+            error: "You cannot send a message to yourself",
+          ),
+        );
         return;
       }
-      
+
       await _sendMessageUsecase.call(message, currentUser.id, receiverId);
       // Don't emit a success state with message, let the stream update handle it
       // The messages will be updated automatically through the stream listener
@@ -55,18 +58,10 @@ class ConversationCubit extends Cubit<ConversationState> {
       log(
         "loadMessages: current user id: ${currentUser.id}, friendId: $friendId",
       );
-      
-      // Find the correct chat path
-      final exsistingChat = await _chatRepositoryImpl!.checkExsistingChat(
-        currentUser.id,
-        friendId,
-      );
-      
-      log("loadMessages: exsistingChat result: $exsistingChat");
-      
+
       // Get the base chats reference
       final chatsDBRef = await _getChatsReferenceUsecase.call();
-      
+
       // Listen to the entire chats node and filter for our conversation
       _chatMessagesSubscription = chatsDBRef.onValue.listen((event) {
         _processMessages(currentUser, event.snapshot.value, friendId);
@@ -79,42 +74,53 @@ class ConversationCubit extends Cubit<ConversationState> {
 
   Future<void> _processMessages(
     UserEntity currentUser,
-    dynamic data,
+    dynamic event,
     String friendId,
   ) async {
-    if (data == null) {
+    if (event == null) {
       emit(ConversationLoadedState(messages: [], currentUser: currentUser));
       return;
     }
 
     try {
-      final allChats = data as Map<dynamic, dynamic>;
+      final allChats = event as Map<dynamic, dynamic>;
       final List<MessageEntity> messages = [];
-      
-      log("_processMessages: Processing chats data with keys: ${allChats.keys.toList()}");
-      
+
+      log(
+        "_processMessages: Processing chats data with keys: ${allChats.keys.toList()}",
+      );
+
       // Look through all chat rooms to find messages for this conversation
       allChats.forEach((chatRoomKey, chatRoomData) {
         if (chatRoomData != null && chatRoomData is Map) {
-          final chatRoom = Map<String, dynamic>.from(chatRoomData as Map);
-          
+          final chatRoom = Map<String, dynamic>.from(chatRoomData);
+
           // Check if this chat room has a messages node
           if (chatRoom.containsKey('messages') && chatRoom['messages'] is Map) {
-            final messagesData = Map<String, dynamic>.from(chatRoom['messages'] as Map);
-            
-            log("_processMessages: Found messages in chat room $chatRoomKey with ${messagesData.length} messages");
-            
+            final messagesData = Map<String, dynamic>.from(
+              chatRoom['messages'] as Map,
+            );
+
+            log(
+              "_processMessages: Found messages in chat room $chatRoomKey with ${messagesData.length} messages",
+            );
+
             // Process each message in this chat room
             messagesData.forEach((messageKey, messageData) {
               if (messageData != null && messageData is Map) {
-                final message = Map<String, dynamic>.from(messageData as Map);
-                
+                final message = Map<String, dynamic>.from(messageData);
+
                 final String senderId = message['senderId'] as String? ?? '';
-                final String receiverId = message['receiverId'] as String? ?? '';
-                
-                log("_processMessages: Checking message - senderId: $senderId, receiverId: $receiverId");
-                log("_processMessages: Looking for - currentUser: $currentUser, friendId: $friendId");
-                
+                final String receiverId =
+                    message['receiverId'] as String? ?? '';
+
+                log(
+                  "_processMessages: Checking message - senderId: $senderId, receiverId: $receiverId",
+                );
+                log(
+                  "_processMessages: Looking for - currentUserId: ${currentUser.id}, friendId: $friendId",
+                );
+
                 // Check if this message is part of the current conversation
                 if ((senderId == currentUser.id && receiverId == friendId) ||
                     (senderId == friendId && receiverId == currentUser.id)) {
@@ -132,7 +138,7 @@ class ConversationCubit extends Cubit<ConversationState> {
           }
         }
       });
-      
+
       // Sort messages by timestamp if available
       messages.sort((a, b) {
         try {
@@ -143,9 +149,13 @@ class ConversationCubit extends Cubit<ConversationState> {
           return 0;
         }
       });
-      
-      log("_processMessages: Final result - Found ${messages.length} messages for conversation");
-      emit(ConversationLoadedState(messages: messages, currentUser: currentUser));
+
+      log(
+        "_processMessages: Final result - Found ${messages.length} messages for conversation",
+      );
+      emit(
+        ConversationLoadedState(messages: messages, currentUser: currentUser),
+      );
     } catch (e) {
       log("_processMessages error: $e");
       emit(ConversationFailureState(error: "Failed to load messages: $e"));

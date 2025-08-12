@@ -14,6 +14,7 @@ import 'package:chat_app/presentation/widgets/set_password_bottom_sheet.dart';
 import 'package:chat_app/presentation/widgets/setting_tab.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:toastification/toastification.dart';
 
@@ -62,6 +63,7 @@ class SettingsPage extends StatelessWidget {
           if (state is UserDataLoadedState) {
             final String name =
                 '${state.user.name.split(' ').first} ${state.user.name.split(' ')[1]}';
+            final id = state.user.id;
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -82,14 +84,6 @@ class SettingsPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Welcome",
-                              style: TextStyle(
-                                color: Colors.grey.shade500,
-                                fontSize: 15,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            Text(
                               name,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
@@ -99,36 +93,39 @@ class SettingsPage extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
 
-                      BlocListener<SignOutBloc, SignOutState>(
-                        listener: (context, state) {
-                          if (state is AuthFailureState) {
-                            showToastification(
-                              context,
-                              "Signout Failed",
-                              Colors.red,
-                              ToastificationType.error,
-                            );
-                          }
-                          if (state is AuthSuccessState) {
-                            showToastification(
-                              context,
-                              "Signout Successful",
-                              Colors.green,
-                              ToastificationType.success,
-                            );
-                            context.router.replace(const HomeRoute());
-                          }
-                        },
-                        child: IconButton(
-                          onPressed: () {
-                            context.read<SignOutBloc>().add(AuthSignOutEvent());
-                          },
-                          style: IconButton.styleFrom(iconSize: 30),
-                          icon: Icon(Icons.logout, color: Colors.red),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  id,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey.shade600,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                GestureDetector(
+                                  onTap: () {
+                                    Clipboard.setData(ClipboardData(text: id));
+                                    showToastification(
+                                      context,
+                                      'Copied to clipboard',
+                                      Colors.green,
+                                      ToastificationType.success,
+                                    );
+                                  },
+                                  child: Icon(
+                                    Icons.copy,
+                                    color: AppColors.lightBlack,
+                                    size: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -140,7 +137,7 @@ class SettingsPage extends StatelessWidget {
 
                   SettingTab(
                     icon: AppIcons.person,
-                    label: 'User Profile',
+                    label: 'User Settings',
                     onTap: () {
                       context.router.push(const UserProfileRoute());
                     },
@@ -174,6 +171,54 @@ class SettingsPage extends StatelessWidget {
                         value,
                       );
                     },
+                  ),
+
+                  Divider(height: 1),
+
+                  SizedBox(height: 30),
+
+                  BlocListener<SignOutBloc, SignOutState>(
+                    listener: (context, state) {
+                      if (state is AuthFailureState) {
+                        showToastification(
+                          context,
+                          "Signout Failed",
+                          Colors.red,
+                          ToastificationType.error,
+                        );
+                      }
+                      if (state is AuthSuccessState) {
+                        showToastification(
+                          context,
+                          "Signout Successful",
+                          Colors.green,
+                          ToastificationType.success,
+                        );
+                        context.router.replace(const HomeRoute());
+                      }
+                    },
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.read<SignOutBloc>().add(AuthSignOutEvent());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        overlayColor: Colors.transparent,
+                        elevation: 0,
+                        backgroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: Text(
+                        "Logout",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

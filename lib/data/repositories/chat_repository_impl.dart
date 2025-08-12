@@ -1,7 +1,6 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/chat_repository.dart';
-import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class ChatRepositoryImpl implements ChatRepository {

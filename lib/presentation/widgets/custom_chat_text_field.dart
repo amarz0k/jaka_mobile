@@ -38,7 +38,7 @@ class CustomChatTextField extends StatelessWidget {
         floatingLabelBehavior: FloatingLabelBehavior.always,
         hintText: hintText,
         hintStyle: TextStyle(
-          color: Colors.white,
+          color: Colors.grey.shade400,
           fontSize: 20,
           fontWeight: FontWeight.w500,
         ),

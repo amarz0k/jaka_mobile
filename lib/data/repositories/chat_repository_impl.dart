@@ -28,15 +28,15 @@ class ChatRepositoryImpl implements ChatRepository {
     final chat1 = await chatsDBRef1.get();
     final chat2 = await chatsDBRef2.get();
 
-    if (chat1 == null && chat2 == null) {
+    if (!chat1.exists && !chat2.exists) {
       return {'chat1': false, 'chat2': false};
     }
 
-    if (chat1 != null) {
+    if (chat1.exists) {
       return {'chat1': true, 'chat2': false};
     }
 
-    if (chat2 != null) {
+    if (chat2.exists) {
       return {'chat1': false, 'chat2': true};
     }
     return {'chat1': false, 'chat2': false};
@@ -49,9 +49,8 @@ class ChatRepositoryImpl implements ChatRepository {
     String receiverId,
   ) async {
     try {
-      final currentUser = await getIt<GetUserFromRealtimeDatabaseUsecase>()
-          .call();
-      if (currentUser.id == senderId) {
+      // Check if user is trying to send message to themselves
+      if (senderId == receiverId) {
         throw Exception('You cannot send message to yourself');
       }
 
@@ -72,24 +71,23 @@ class ChatRepositoryImpl implements ChatRepository {
         receiverId,
       );
 
-      if (exsistingChat['chat1'] == true && exsistingChat['chat2'] == true) {
+      if (exsistingChat['chat1'] == true) {
         await chatsDBRef1.push().set({
           'senderId': senderId,
           'receiverId': receiverId,
           'text': message,
           'sentAt': DateTime.now().toIso8601String(),
         });
-      } else if (exsistingChat['chat1'] == true &&
-          exsistingChat['chat2'] == false) {
-        await chatsDBRef1.push().set({
-          'senderId': senderId,
-          'receiverId': receiverId,
-          'text': message,
-          'sentAt': DateTime.now().toIso8601String(),
-        });
-      } else if (exsistingChat['chat1'] == false &&
-          exsistingChat['chat2'] == true) {
+      } else if (exsistingChat['chat2'] == true) {
         await chatsDBRef2.push().set({
+          'senderId': senderId,
+          'receiverId': receiverId,
+          'text': message,
+          'sentAt': DateTime.now().toIso8601String(),
+        });
+      } else {
+        // No existing chat, create new one using chat1 format
+        await chatsDBRef1.push().set({
           'senderId': senderId,
           'receiverId': receiverId,
           'text': message,

@@ -55,6 +55,11 @@ void setUpServiceLocator() {
     () => UserRepositoryImpl(getIt<HiveService>()),
   );
 
+  // Add this line to register UserRepositoryImpl as a concrete type
+  getIt.registerLazySingleton<UserRepositoryImpl>(
+    () => UserRepositoryImpl(getIt<HiveService>()),
+  );
+
   getIt.registerLazySingleton<ChatRepository>(
     () => ChatRepositoryImpl(getIt<UserRepositoryImpl>()),
   );
@@ -132,6 +137,10 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<GetChatsReferenceUsecase>(
     () => GetChatsReferenceUsecase(getIt<ChatRepository>()),
+  );
+
+  getIt.registerLazySingleton<ChatRepositoryImpl>(
+    () => ChatRepositoryImpl(getIt<UserRepositoryImpl>()),
   );
 
   // others

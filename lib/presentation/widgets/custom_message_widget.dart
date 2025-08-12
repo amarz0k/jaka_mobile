@@ -25,14 +25,64 @@ class CustomMessageWidget extends StatelessWidget {
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: imageDetector(imageUrl!, 45, isCircle: true),
-                ),
-                SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 15,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.only(
+                            topLeft: circularRadius,
+                            topRight: circularRadius,
+                            bottomLeft: circularRadius,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              text!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1000,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+
+                            Text(
+                              DateStyleConverter.covertToTimeStyle(dateTime!),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white54,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 10),
+                imageDetector(imageUrl!, 45, isCircle: true),
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                imageDetector(imageUrl!, 45, isCircle: true),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -47,32 +97,37 @@ class CustomMessageWidget extends StatelessWidget {
                             bottomRight: circularRadius,
                           ),
                         ),
-                        child: Text(
-                          text!,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1000,
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: AppColors.lightBlack,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              text!,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1000,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.lightBlack,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 10),
 
-                      Text(
-                        DateStyleConverter.covertToTimeStyle(dateTime!),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.lightBlack,
-                          fontWeight: FontWeight.w400,
+                            Text(
+                              DateStyleConverter.covertToTimeStyle(dateTime!),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
               ],
-            )
-          : Container(),
+            ),
     );
   }
 }

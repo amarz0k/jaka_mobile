@@ -19,6 +19,8 @@ abstract class UserRepository {
 
   Future<void> updateUserPassword(String password);
 
+  Future<void> updateUserName(String name);
+
   Future<void> sendFriendRequest(String id);
 
   Future<void> acceptFriendRequest(String id);

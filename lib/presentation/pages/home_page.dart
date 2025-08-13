@@ -245,6 +245,7 @@ class HomePage extends StatelessWidget {
                                       context.read<UserDataCubit>().addFriend(
                                         _addFriendController.text,
                                       );
+                                      _addFriendController.clear();
                                     },
                                     style: IconButton.styleFrom(
                                       backgroundColor: AppColors.primaryColor,
@@ -326,6 +327,58 @@ class HomePage extends StatelessWidget {
                                               friendName: request.name,
                                               friendPhotoUrl: request.photoUrl,
                                             ),
+                                          );
+                                        },
+                                        onLongPress: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                    top: Radius.circular(16),
+                                                  ),
+                                            ),
+                                            builder: (ctx) {
+                                              return SafeArea(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    ListTile(
+                                                      leading: const Icon(
+                                                        Icons.person_remove,
+                                                        color: Colors.red,
+                                                      ),
+                                                      title: const Text(
+                                                        'Unfriend',
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.of(ctx).pop();
+                                                        context
+                                                            .read<
+                                                              UserDataCubit
+                                                            >()
+                                                            .rejectFriendRequest(
+                                                              request.id,
+                                                            );
+                                                        context
+                                                            .read<
+                                                              UserDataCubit
+                                                            >()
+                                                            .removeAllMessagesBetween(
+                                                              request.id,
+                                                            );
+                                                      },
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           );
                                         },
                                       );

@@ -8,6 +8,7 @@ class FriendWidget extends StatelessWidget {
   final String? lastMessage;
   final String? time;
   final Function()? onTap;
+  final Function()? onLongPress;
 
   final double nameFontSize;
   final double lastMessageFontSize;
@@ -19,6 +20,7 @@ class FriendWidget extends StatelessWidget {
     required this.lastMessage,
     required this.time,
     this.onTap,
+    this.onLongPress,
     this.nameFontSize = 18,
     this.lastMessageFontSize = 14,
   });
@@ -29,6 +31,7 @@ class FriendWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 1.0),
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         borderRadius: BorderRadius.circular(10),
         child: Container(
           margin: const EdgeInsets.only(top: 10, bottom: 8, left: 10, right: 8),

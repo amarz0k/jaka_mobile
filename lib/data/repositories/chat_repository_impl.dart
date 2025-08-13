@@ -1,6 +1,7 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/data/repositories/user_repository_impl.dart';
 import 'package:chat_app/domain/repositories/chat_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
@@ -146,6 +147,42 @@ class ChatRepositoryImpl implements ChatRepository {
       }
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<void> removeAllMessagesBetween(
+    String senderId,
+    String receiverId,
+  ) async {
+    try {
+      final Map<String, bool> exsistingChat = await checkExsistingChat(
+        senderId,
+        receiverId,
+      );
+
+      final chatId1 =
+          '${_userRepository.createSafeFirebasePath(senderId)}_${_userRepository.createSafeFirebasePath(receiverId)}';
+      final chatId2 =
+          '${_userRepository.createSafeFirebasePath(receiverId)}_${_userRepository.createSafeFirebasePath(senderId)}';
+
+      final chatPath1 = 'chats/$chatId1/messages';
+      final chatPath2 = 'chats/$chatId2/messages';
+      final chatsDBRef1 = getIt<FirebaseDatabase>().ref().child(chatPath1);
+      final chatsDBRef2 = getIt<FirebaseDatabase>().ref().child(chatPath2);
+
+      if (exsistingChat['chat1'] == true) {
+        await chatsDBRef1.set({});
+      } else if (exsistingChat['chat2'] == true) {
+        await chatsDBRef2.set({});
+      } else {
+        await chatsDBRef1.set({});
+      }
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'removeAllMessagesBetween',
+        message: e.toString(),
+      );
     }
   }
 

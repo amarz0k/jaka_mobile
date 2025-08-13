@@ -11,6 +11,7 @@ import 'package:chat_app/domain/usecases/get_friends_db_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_by_id_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dart';
 import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
+import 'package:chat_app/domain/usecases/remove_all_messages_between_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,6 +24,7 @@ class UserDataCubit extends Cubit<UserDataState> {
   final RejectFriendRequestUsecase _rejectFriendRequestUsecase;
   final GetUserByIdUsecase _getUserByIdUsecase;
   final AcceptFriendRequestUsecase _acceptFriendRequestUsecase;
+  final RemoveAllMessagesBetweenUsecase _removeAllMessagesBetweenUsecase;
   String? _currentUserId;
   StreamSubscription? _userDataSubscription;
   StreamSubscription? _friendRequestsSubscription;
@@ -35,6 +37,8 @@ class UserDataCubit extends Cubit<UserDataState> {
       _getFriendsDbReferenceUsecase = getIt<GetFriendsDbReferenceUsecase>(),
       _getUserByIdUsecase = getIt<GetUserByIdUsecase>(),
       _acceptFriendRequestUsecase = getIt<AcceptFriendRequestUsecase>(),
+      _removeAllMessagesBetweenUsecase =
+          getIt<RemoveAllMessagesBetweenUsecase>(),
       super(InitialState()) {
     initialize();
   }
@@ -326,6 +330,28 @@ class UserDataCubit extends Cubit<UserDataState> {
         errorMessage = "Something went wrong";
       }
       emit(currentState.copyWith(error: errorMessage));
+    }
+  }
+
+  Future<void> removeAllMessagesBetween(String receiverId) async {
+    try {
+      final currentState = state;
+      await _removeAllMessagesBetweenUsecase.call(_currentUserId!, receiverId);
+      if (currentState is UserDataLoadedState) {
+        emit(
+          currentState.copyWith(message: "All messages removed successfully"),
+        );
+      }
+      _loadFriendRequests();
+    } catch (e) {
+      String errorMessage;
+      if (e is FirebaseAuthException) {
+        log("Firebase Auth Exception - Code: ${e.code}, Message: ${e.message}");
+        errorMessage = e.message ?? "Something went wrong";
+      } else {
+        errorMessage = "Something went wrong";
+      }
+      emit(FailureState(error: errorMessage));
     }
   }
 

@@ -15,6 +15,7 @@ import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dar
 import 'package:chat_app/domain/usecases/get_user_from_local_database_usecase.dart';
 import 'package:chat_app/domain/usecases/get_user_from_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
+import 'package:chat_app/domain/usecases/remove_all_messages_between_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_local_usecase.dart';
 import 'package:chat_app/domain/usecases/save_user_to_realtime_database_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
@@ -141,6 +142,10 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<ChatRepositoryImpl>(
     () => ChatRepositoryImpl(getIt<UserRepositoryImpl>()),
+  );
+
+  getIt.registerLazySingleton<RemoveAllMessagesBetweenUsecase>(
+    () => RemoveAllMessagesBetweenUsecase(getIt<ChatRepositoryImpl>()),
   );
 
   // others

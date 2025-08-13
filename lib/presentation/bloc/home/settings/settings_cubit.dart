@@ -1,6 +1,7 @@
 import 'package:chat_app/core/di/service_locator.dart';
 import 'package:chat_app/domain/repositories/user_repository.dart';
 import 'package:chat_app/domain/usecases/update_user_notifications_usecase.dart';
+import 'package:chat_app/domain/usecases/update_user_name_usecase.dart';
 import 'package:chat_app/domain/usecases/update_user_password_uasecase.dart';
 import 'package:chat_app/presentation/bloc/home/settings/settings_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SettingsCubit extends Cubit<SettingsState> {
   final UpdateUserNotificationsUsecase _updateUserNotificationsUsecase;
   final UpdateUserPasswordUsecase _updateUserPasswordUsecase;
+  final UpdateUserNameUsecase _updateUserNameUsecase;
 
   // Add fields to track validation states
   String? _setPasswordError;
@@ -18,9 +20,13 @@ class SettingsCubit extends Cubit<SettingsState> {
   String? _newPasswordError;
   String? _confirmNewPasswordError;
 
+  // Add fields for change name validation
+  String? _newNameError;
+
   SettingsCubit({required UserRepository userRepository})
     : _updateUserNotificationsUsecase = getIt<UpdateUserNotificationsUsecase>(),
       _updateUserPasswordUsecase = getIt<UpdateUserPasswordUsecase>(),
+      _updateUserNameUsecase = getIt<UpdateUserNameUsecase>(),
       super(SettingsInitialState());
 
   Future<void> updateUserNotifications(bool value) async {
@@ -38,6 +44,16 @@ class SettingsCubit extends Cubit<SettingsState> {
     try {
       await _updateUserPasswordUsecase.call(password);
       emit(SettingsSuccessState(message: "Password updated successfully"));
+    } catch (e) {
+      emit(SettingsFailureState(error: e.toString()));
+    }
+  }
+
+  Future<void> updateUserName(String name) async {
+    emit(SettingsLoadingState());
+    try {
+      await _updateUserNameUsecase.call(name);
+      emit(SettingsSuccessState(message: "Name updated successfully"));
     } catch (e) {
       emit(SettingsFailureState(error: e.toString()));
     }
@@ -133,6 +149,25 @@ class SettingsCubit extends Cubit<SettingsState> {
         oldPasswordError: _oldPasswordError,
         newPasswordError: _newPasswordError,
         confirmNewPasswordError: _confirmNewPasswordError,
+      ),
+    );
+  }
+
+  // New methods for change name functionality
+  void checkNewName(String newName) {
+    if (newName.isEmpty) {
+      _newNameError = null; // Don't show error for empty field
+    } else if (newName.length < 2) {
+      _newNameError = "Name must be at least 2 characters";
+    } else if (newName.length > 50) {
+      _newNameError = "Name must be less than 50 characters";
+    } else {
+      _newNameError = null;
+    }
+
+    emit(
+      SettingsChangeNameValidationState(
+        newNameError: _newNameError,
       ),
     );
   }

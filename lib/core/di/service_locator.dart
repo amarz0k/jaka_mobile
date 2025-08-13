@@ -25,6 +25,7 @@ import 'package:chat_app/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_up_with_email_usecase.dart';
 import 'package:chat_app/domain/usecases/update_user_notifications_usecase.dart';
+import 'package:chat_app/domain/usecases/update_user_name_usecase.dart';
 import 'package:chat_app/domain/usecases/update_user_password_uasecase.dart';
 import 'package:chat_app/presentation/bloc/home/settings/settings_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -106,6 +107,10 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<UpdateUserPasswordUsecase>(
     () => UpdateUserPasswordUsecase(getIt<UserRepository>()),
+  );
+
+  getIt.registerLazySingleton<UpdateUserNameUsecase>(
+    () => UpdateUserNameUsecase(getIt<UserRepository>()),
   );
 
   getIt.registerLazySingleton<SendFriendRequestUsecase>(

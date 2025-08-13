@@ -51,3 +51,12 @@ class SettingsChangePasswordValidationState extends SettingsState {
     this.confirmNewPasswordError,
   });
 }
+
+// Add new state for change name validation
+class SettingsChangeNameValidationState extends SettingsState {
+  final String? newNameError;
+
+  SettingsChangeNameValidationState({
+    this.newNameError,
+  });
+}

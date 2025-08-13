@@ -128,6 +128,19 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> updateUserName(String name) async {
+    try {
+      final dbRef = await getIt<UserRepository>().getUserDatabaseReference();
+      await dbRef.update({'name': name});
+    } catch (e) {
+      throw FirebaseException(
+        plugin: 'updateUserName',
+        message: e.toString(),
+      );
+    }
+  }
+
+  @override
   Future<DatabaseReference> getFriendsDatabaseReference() async {
     try {
       final friendsDbRef = getIt<FirebaseDatabase>().ref().child('friends');

@@ -2,8 +2,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:chat_app/constants/app_colors.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_cubit.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
+import 'package:chat_app/presentation/bloc/home/settings/settings_cubit.dart';
+import 'package:chat_app/core/di/service_locator.dart';
+import 'package:chat_app/presentation/widgets/change_password_bottom_sheet.dart';
 import 'package:chat_app/presentation/widgets/image_detector.dart';
 import 'package:chat_app/presentation/widgets/toastification_toast.dart';
+import 'package:chat_app/presentation/widgets/change_name_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,20 +19,22 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          "User Settings",
-          style: TextStyle(
-            fontSize: 28,
-            color: AppColors.lightBlack,
-            fontWeight: FontWeight.w600,
+    return BlocProvider(
+      create: (context) => getIt<SettingsCubit>(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          title: Text(
+            "User Settings",
+            style: TextStyle(
+              fontSize: 28,
+              color: AppColors.lightBlack,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-      body: BlocBuilder<UserDataCubit, UserDataState>(
+        body: BlocBuilder<UserDataCubit, UserDataState>(
         builder: (context, state) {
           if (state is LoadingState) {
             return const Center(child: CircularProgressIndicator());
@@ -96,6 +102,20 @@ class UserProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
+                // Name
+                ListTile(
+                  leading: const Icon(Icons.person_outline),
+                  title: const Text('Name'),
+                  subtitle: Text(name),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.edit),
+                    color: AppColors.lightBlack,
+                    onPressed: () {
+                      changeNameBottomSheet(context);
+                    },
+                  ),
+                ),
+
                 // Email
                 ListTile(
                   leading: const Icon(Icons.email_outlined),
@@ -121,6 +141,13 @@ class UserProfilePage extends StatelessWidget {
                   leading: const Icon(Icons.lock_outline),
                   title: const Text('Password'),
                   subtitle: Text(hasPassword ? 'Set' : 'Not set'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.edit),
+                    color: AppColors.lightBlack,
+                    onPressed: () {
+                      changePassordBottomSheet(context);
+                    }
+                  )
                 ),
 
                 // Notifications status
@@ -152,6 +179,7 @@ class UserProfilePage extends StatelessWidget {
           }
           return const Center(child: CircularProgressIndicator());
         },
+      ),
       ),
     );
   }

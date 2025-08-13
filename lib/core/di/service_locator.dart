@@ -26,6 +26,7 @@ import 'package:chat_app/domain/usecases/sign_out_usecase.dart';
 import 'package:chat_app/domain/usecases/sign_up_with_email_usecase.dart';
 import 'package:chat_app/domain/usecases/update_user_notifications_usecase.dart';
 import 'package:chat_app/domain/usecases/update_user_password_uasecase.dart';
+import 'package:chat_app/domain/usecases/update_user_profile_usecase.dart';
 import 'package:chat_app/presentation/bloc/home/settings/settings_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -146,6 +147,10 @@ void setUpServiceLocator() {
 
   getIt.registerLazySingleton<RemoveAllMessagesBetweenUsecase>(
     () => RemoveAllMessagesBetweenUsecase(getIt<ChatRepositoryImpl>()),
+  );
+
+  getIt.registerLazySingleton<UpdateUserProfileUsecase>(
+    () => UpdateUserProfileUsecase(getIt<UserRepositoryImpl>()),
   );
 
   // others

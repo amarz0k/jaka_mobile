@@ -13,6 +13,7 @@ import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dar
 import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
 import 'package:chat_app/domain/usecases/remove_all_messages_between_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
+import 'package:chat_app/domain/usecases/update_user_profile_usecase.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,7 @@ class UserDataCubit extends Cubit<UserDataState> {
   final GetUserByIdUsecase _getUserByIdUsecase;
   final AcceptFriendRequestUsecase _acceptFriendRequestUsecase;
   final RemoveAllMessagesBetweenUsecase _removeAllMessagesBetweenUsecase;
+  final UpdateUserProfileUsecase _updateUserProfileUsecase;
   String? _currentUserId;
   StreamSubscription? _userDataSubscription;
   StreamSubscription? _friendRequestsSubscription;
@@ -39,6 +41,7 @@ class UserDataCubit extends Cubit<UserDataState> {
       _acceptFriendRequestUsecase = getIt<AcceptFriendRequestUsecase>(),
       _removeAllMessagesBetweenUsecase =
           getIt<RemoveAllMessagesBetweenUsecase>(),
+      _updateUserProfileUsecase = getIt<UpdateUserProfileUsecase>(),
       super(InitialState()) {
     initialize();
   }
@@ -69,9 +72,7 @@ class UserDataCubit extends Cubit<UserDataState> {
             final user = UserModel.fromJson(
               Map<String, dynamic>.from(event.snapshot.value as Map),
             ).toEntity();
-            log("current user id: $_currentUserId");
             _currentUserId = user.id;
-            log("after current user id: $_currentUserId");
             emit(UserDataLoadedState(user: user));
           } catch (e) {
             emit(FailureState(error: e.toString()));
@@ -145,8 +146,7 @@ class UserDataCubit extends Cubit<UserDataState> {
             receiverId: friend['receiverId'] as String,
             sentAt: friend['sentAt'] as String,
             status: friend['status'] as String,
-            lastMessage:
-                friend['lastMessage'] as String?, // Change to nullable String
+            lastMessage: friend['lastMessage'] as String?,
             lastMessageDate: friend['lastMessageDate'] != null
                 ? DateTime.parse(friend['lastMessageDate'] as String)
                 : null,
@@ -175,6 +175,7 @@ class UserDataCubit extends Cubit<UserDataState> {
     final List<FriendEntity> incomingRequestsData = [];
     for (final request in incomingRequests) {
       try {
+        log("request: $request");
         final friendData = await _getUserByIdUsecase.call(request.senderId);
         if (friendData != null) {
           incomingRequestsData.add(
@@ -270,7 +271,13 @@ class UserDataCubit extends Cubit<UserDataState> {
 
     try {
       await _sendFriendRequestUsecase.call(id);
-      emit(currentState.copyWith(message: "Friend request sent successfully"));
+      emit(
+        currentState.copyWith(
+          message: "Friend request sent successfully",
+          clearMessage: true,
+          clearError: true,
+        ),
+      );
     } catch (e) {
       String errorMessage;
       if (e is FirebaseAuthException) {
@@ -335,14 +342,39 @@ class UserDataCubit extends Cubit<UserDataState> {
 
   Future<void> removeAllMessagesBetween(String receiverId) async {
     try {
-      final currentState = state;
+      // final currentState = state;
       await _removeAllMessagesBetweenUsecase.call(_currentUserId!, receiverId);
-      if (currentState is UserDataLoadedState) {
-        emit(
-          currentState.copyWith(message: "All messages removed successfully"),
-        );
-      }
+      // if (currentState is UserDataLoadedState) {
+      //   emit(
+      //     currentState.copyWith(message: "All messages removed successfully"),
+      //   );
+      // }
       _loadFriendRequests();
+    } catch (e) {
+      String errorMessage;
+      if (e is FirebaseAuthException) {
+        log("Firebase Auth Exception - Code: ${e.code}, Message: ${e.message}");
+        errorMessage = e.message ?? "Something went wrong";
+      } else {
+        errorMessage = "Something went wrong";
+      }
+      emit(FailureState(error: errorMessage));
+    }
+  }
+
+  Future<void> updateUserProfile(String? name, String? photoUrl) async {
+    try {
+      final currentState = state;
+      await _updateUserProfileUsecase.call(name, photoUrl);
+      emit(
+        currentState is UserDataLoadedState
+            ? currentState.copyWith(
+                message: "Profile updated successfully",
+                clearMessage: true,
+                clearError: true,
+              )
+            : currentState,
+      );
     } catch (e) {
       String errorMessage;
       if (e is FirebaseAuthException) {

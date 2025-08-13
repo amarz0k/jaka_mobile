@@ -26,4 +26,6 @@ abstract class UserRepository {
   Future<void> rejectFriendRequest(String id);
 
   Future<UserModel?> getUserById(String id);
+  
+  Future<void> updateUserProfile(String? name, String? photoUrl);
 }

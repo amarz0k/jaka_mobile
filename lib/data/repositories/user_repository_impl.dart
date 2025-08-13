@@ -128,6 +128,24 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> updateUserProfile(String? name, String? photoUrl) async {
+    try {
+      final dbRef = await getIt<UserRepository>().getUserDatabaseReference();
+      if (name != null) {
+        await dbRef.update({'name': name});
+      }
+      if (photoUrl != null) {
+        await dbRef.update({'photoUrl': photoUrl});
+      }
+    } catch (e) {
+      throw FirebaseException(
+        plugin: 'updateUserProfile',
+        message: e.toString(),
+      );
+    }
+  }
+
+  @override
   Future<DatabaseReference> getFriendsDatabaseReference() async {
     try {
       final friendsDbRef = getIt<FirebaseDatabase>().ref().child('friends');
@@ -182,13 +200,12 @@ class UserRepositoryImpl implements UserRepository {
         message: 'Can\'t send friend request to yourself',
       );
     }
-    final friend = await getUserById(id);
     final requestId =
-        '${createSafeFirebasePath(currentUser.id)}_${createSafeFirebasePath(friend!.id)}';
+        '${createSafeFirebasePath(currentUser.id)}_${createSafeFirebasePath(id)}';
 
     final dbRef = getIt<FirebaseDatabase>().ref().child('friends/$requestId');
 
-    if (await requestExists(currentUser.id, friend.id)) {
+    if (await requestExists(currentUser.id, id)) {
       throw FirebaseAuthException(
         code: 'REQUEST_EXISTS',
         message: 'Request already sent to this user',
@@ -197,7 +214,7 @@ class UserRepositoryImpl implements UserRepository {
 
     await dbRef.set({
       'senderId': currentUser.id,
-      'receiverId': friend.id,
+      'receiverId': id,
       'status': 'pending',
       'sentAt': DateTime.now().toIso8601String(),
       'acceptedAt': "",
@@ -275,7 +292,6 @@ class UserRepositoryImpl implements UserRepository {
         'status': 'accepted',
         'acceptedAt': DateTime.now().toIso8601String(),
       });
-
     } catch (e) {
       throw FirebaseAuthException(
         code: 'ACCEPT_FRIEND_REQUEST_FAILED',

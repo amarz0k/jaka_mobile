@@ -13,7 +13,6 @@ import 'package:chat_app/domain/usecases/get_user_database_reference_usecase.dar
 import 'package:chat_app/domain/usecases/reject_friend_request_usecase.dart';
 import 'package:chat_app/domain/usecases/remove_all_messages_between_usecase.dart';
 import 'package:chat_app/domain/usecases/send_friend_request_usecase.dart';
-import 'package:chat_app/domain/usecases/update_user_profile_usecase.dart';
 import 'package:chat_app/presentation/bloc/home/user_data/user_data_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +25,7 @@ class UserDataCubit extends Cubit<UserDataState> {
   final GetUserByIdUsecase _getUserByIdUsecase;
   final AcceptFriendRequestUsecase _acceptFriendRequestUsecase;
   final RemoveAllMessagesBetweenUsecase _removeAllMessagesBetweenUsecase;
-  final UpdateUserProfileUsecase _updateUserProfileUsecase;
+
   String? _currentUserId;
   StreamSubscription? _userDataSubscription;
   StreamSubscription? _friendRequestsSubscription;
@@ -41,7 +40,7 @@ class UserDataCubit extends Cubit<UserDataState> {
       _acceptFriendRequestUsecase = getIt<AcceptFriendRequestUsecase>(),
       _removeAllMessagesBetweenUsecase =
           getIt<RemoveAllMessagesBetweenUsecase>(),
-      _updateUserProfileUsecase = getIt<UpdateUserProfileUsecase>(),
+
       super(InitialState()) {
     initialize();
   }
@@ -350,31 +349,6 @@ class UserDataCubit extends Cubit<UserDataState> {
       //   );
       // }
       _loadFriendRequests();
-    } catch (e) {
-      String errorMessage;
-      if (e is FirebaseAuthException) {
-        log("Firebase Auth Exception - Code: ${e.code}, Message: ${e.message}");
-        errorMessage = e.message ?? "Something went wrong";
-      } else {
-        errorMessage = "Something went wrong";
-      }
-      emit(FailureState(error: errorMessage));
-    }
-  }
-
-  Future<void> updateUserProfile(String? name, String? photoUrl) async {
-    try {
-      final currentState = state;
-      await _updateUserProfileUsecase.call(name, photoUrl);
-      emit(
-        currentState is UserDataLoadedState
-            ? currentState.copyWith(
-                message: "Profile updated successfully",
-                clearMessage: true,
-                clearError: true,
-              )
-            : currentState,
-      );
     } catch (e) {
       String errorMessage;
       if (e is FirebaseAuthException) {

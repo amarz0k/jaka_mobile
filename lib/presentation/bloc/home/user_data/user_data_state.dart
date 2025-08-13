@@ -49,11 +49,6 @@ class UserDataLoadedState extends UserDataState {
   }
 }
 
-class SuccessState extends UserDataState {
-  final String? message;
-
-  SuccessState({this.message});
-}
 
 class FailureState extends UserDataState {
   final String? error;

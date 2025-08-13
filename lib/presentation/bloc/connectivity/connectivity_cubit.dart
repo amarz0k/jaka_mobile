@@ -55,24 +55,6 @@ class ConnectivityCubit extends Cubit<ConnectivityState> {
     }
   }
 
-  // Get current connectivity status
-  bool get isConnected {
-    final currentState = state;
-    if (currentState is ConnectivityConnected) {
-      return currentState.isConnected;
-    }
-    return false;
-  }
-
-  // Get connection types
-  List<ConnectivityResult> get connectionTypes {
-    final currentState = state;
-    if (currentState is ConnectivityConnected) {
-      return currentState.connectivityResults;
-    }
-    return [];
-  }
-
   @override
   Future<void> close() {
     _connectivitySubscription?.cancel();

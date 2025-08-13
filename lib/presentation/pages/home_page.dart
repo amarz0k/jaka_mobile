@@ -75,15 +75,6 @@ class HomePage extends StatelessWidget {
               );
             }
 
-            if (state is SuccessState) {
-              showToastification(
-                context,
-                state.message!,
-                Colors.green,
-                ToastificationType.success,
-              );
-            }
-
             if (state is UserDataLoadedState) {
               // Handle success messages within UserDataLoadedState
               if (state.message != null) {

@@ -142,22 +142,28 @@ class SettingsPage extends StatelessWidget {
                       context.router.push(const UserProfileRoute());
                     },
                   ),
+                  state.user.password == "" || state.user.password == null
+                      ? const Divider(height: 1)
+                      : const SizedBox(),
+
+                  state.user.password == "" || state.user.password == null
+                      ? SettingTab(
+                          icon: AppIcons.lock,
+                          label: 'Change Passowrd',
+                          onTap: () {
+                            changePassordBottomSheet(context);
+                          },
+                        )
+                      : const SizedBox(),
                   Divider(height: 1),
 
                   SettingTab(
-                    icon: AppIcons.lock,
-                    label: state.user.password == ""
-                        ? "Set Password"
-                        : 'Change Passowrd',
+                    icon: AppIcons.faq,
+                    label: 'FAQs',
                     onTap: () {
-                      state.user.password == ""
-                          ? setPasswordBottomSheet(context)
-                          : changePassordBottomSheet(context);
+                      context.router.push(const FaqRoute());
                     },
                   ),
-                  Divider(height: 1),
-
-                  SettingTab(icon: AppIcons.faq, label: 'FAQs', onTap: () {}),
 
                   Divider(height: 1),
 

@@ -8,7 +8,8 @@ import 'package:chat_app/presentation/pages/home_page.dart';
 import 'package:chat_app/presentation/pages/login_page.dart';
 import 'package:chat_app/presentation/pages/settings_page.dart';
 import 'package:chat_app/presentation/pages/sign_up_page.dart';
-import 'package:chat_app/presentation/pages/user_profile_page.dart'; // Add this import
+import 'package:chat_app/presentation/pages/user_profile_page.dart';
+import 'package:chat_app/presentation/pages/faq_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -32,7 +33,7 @@ class AppRouter extends _$AppRouter {
     ),
     AutoRoute(
       page: ConversationRoute.page,
-      path: '/conversation/:friendId',
+      path: '/conversation',
       guards: [getIt<AuthGuard>()],
     ),
     AutoRoute(
@@ -43,8 +44,10 @@ class AppRouter extends _$AppRouter {
 
     AutoRoute(
       page: FriendDetailsRoute.page,
-      path: '/friend-details/:friendId',
+      path: '/friend-details',
       guards: [getIt<AuthGuard>()],
     ),
+
+    AutoRoute(page: FaqRoute.page, path: '/faq', guards: [getIt<AuthGuard>()]),
   ];
 }

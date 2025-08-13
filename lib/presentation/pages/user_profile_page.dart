@@ -42,6 +42,9 @@ class UserProfilePage extends StatelessWidget {
             final photoUrl = state.user.photoUrl!;
             final name = state.user.name;
             final id = state.user.id;
+            final email = state.user.email;
+            final notifications = state.user.notifications;
+            final hasPassword = (state.user.password ?? "").isNotEmpty;
 
             return Column(
               children: [
@@ -90,6 +93,59 @@ class UserProfilePage extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 24),
+
+                // Email
+                ListTile(
+                  leading: const Icon(Icons.email_outlined),
+                  title: const Text('Email'),
+                  subtitle: Text(email),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.copy),
+                    color: AppColors.lightBlack,
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: email));
+                      showToastification(
+                        context,
+                        'Email copied',
+                        Colors.green,
+                        ToastificationType.success,
+                      );
+                    },
+                  ),
+                ),
+
+                // Password status
+                ListTile(
+                  leading: const Icon(Icons.lock_outline),
+                  title: const Text('Password'),
+                  subtitle: Text(hasPassword ? 'Set' : 'Not set'),
+                ),
+
+                // Notifications status
+                ListTile(
+                  leading: const Icon(Icons.notifications_none),
+                  title: const Text('Notifications'),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: notifications
+                          ? Colors.green.withOpacity(0.12)
+                          : Colors.red.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      notifications ? 'On' : 'Off',
+                      style: TextStyle(
+                        color: notifications ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             );

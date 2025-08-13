@@ -27,6 +27,12 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    FaqRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const FaqPage(),
+      );
+    },
     FriendDetailsRoute.name: (routeData) {
       final args = routeData.argsAs<FriendDetailsRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -118,6 +124,20 @@ class ConversationRouteArgs {
   String toString() {
     return 'ConversationRouteArgs{key: $key, friendId: $friendId, friendName: $friendName, friendPhotoUrl: $friendPhotoUrl}';
   }
+}
+
+/// generated route for
+/// [FaqPage]
+class FaqRoute extends PageRouteInfo<void> {
+  const FaqRoute({List<PageRouteInfo>? children})
+      : super(
+          FaqRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'FaqRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

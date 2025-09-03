@@ -57,13 +57,13 @@
 
 ### Login & Authentication
 
-<img src="assets/screenshots/Screenshot_2025-09-03-07-23-06-43_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Login Screen"/>
-<img src="assets/screenshots/Screenshot_2025-09-03-07-23-09-83_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Sign Up Screen"/>
+<img src="assets/screenshots/Screenshot_2025-09-03-07-23-13-65_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Chat Screen"/>
+<img src="assets/screenshots/Screenshot_2025-09-03-07-23-18-11_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Home Screen"/>
 
 ### Chat Interface
 
-<img src="assets/screenshots/Screenshot_2025-09-03-07-23-13-65_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Chat Screen"/>
-<img src="assets/screenshots/Screenshot_2025-09-03-07-23-18-11_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Home Screen"/>
+<img src="assets/screenshots/Screenshot_2025-09-03-07-23-06-43_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Login Screen"/>
+<img src="assets/screenshots/Screenshot_2025-09-03-07-23-09-83_8c918bf06c4e14a3c6d2957a72894835.jpg" width="200" alt="Sign Up Screen"/>
 
 </div>
 

@@ -1,1 +1,22 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"yojin-jaka","appId":"1:40879973580:android:1fa440b884c16bd0e28e69","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"yojin-jaka","configurations":{"android":"1:40879973580:android:1fa440b884c16bd0e28e69","ios":"1:40879973580:ios:9707cf2f901cfacae28e69"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "yojin-jaka",
+          "appId": "1:40879973580:android:1fa440b884c16bd0e28e69",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "yojin-jaka",
+          "configurations": {
+            "android": "1:40879973580:android:1fa440b884c16bd0e28e69",
+            "ios": "1:40879973580:ios:9707cf2f901cfacae28e69"
+          }
+        }
+      }
+    }
+  }
+}
